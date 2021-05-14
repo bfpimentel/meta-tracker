@@ -1,6 +1,6 @@
 {
-  "name": "web",
-  "version": "0.1.0",
+  "name": "meta-tracker-web",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,5 +11,18 @@
     "next": "10.2.0",
     "react": "17.0.2",
     "react-dom": "17.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.5",
+    "autoprefixer": "^10.2.5",
+    "eslint": "^7.26.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.23.2",
+    "file-loader": "^6.2.0",
+    "postcss": "^8.2.15",
+    "tailwindcss": "^2.1.2",
+    "typescript": "^4.2.4"
   }
 }
