@@ -36,6 +36,7 @@ export const getServerSideProps = async (context: {
   params: { codes: string };
 }) => {
   const splitCodes = context.params.codes.split(",");
+
   const trackings = await track(splitCodes);
 
   return {
