@@ -18,7 +18,7 @@ interface Tracking {
 
 interface Event {
   description: string;
-  country?: string;
+  country: string;
   state?: string;
   city?: string;
   trackedAt: Date;
@@ -29,15 +29,16 @@ export default async (
   response: NextApiResponse<Tracking[]>
 ) => {
   const requestBody: TrackingRequestBody = request.body;
-  response.status(200).json(await track(requestBody.codes));
+  response.status(200).json(await getAllTrackings(requestBody.codes));
 };
 
-const track = (codes: string[]) => Promise.all(codes.map(requestTracking));
+const getAllTrackings = (codes: string[]) =>
+  Promise.all(codes.map(getTracking));
 
 const isCodeInputValid = (code: string) =>
   /^[A-Z]{2}[0-9]{9}[A-Z]{2}$/.test(code);
 
-async function requestTracking(code: string): Promise<Tracking> {
+const getTracking = async (code: string): Promise<Tracking> => {
   try {
     const form = new FormData();
     form.append("objetos", code);
@@ -78,9 +79,9 @@ async function requestTracking(code: string): Promise<Tracking> {
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-function getEvents(html: string) {
+const getEvents = (html: string): Event[] => {
   const $ = cheerio.load(html);
   const columns = $(".listEvent").find("tbody").find("tr").toArray();
   const data = columns.map((column) => {
@@ -116,19 +117,18 @@ function getEvents(html: string) {
 
     if (line[1][1]) {
       const subdescription = line[1].slice(1).join(" ");
-
-      description =
-        description.replace(" - por favor aguarde", " ") + subdescription;
+      description = description.replace(" - por favor aguarde", " ");
+      description += subdescription;
     }
 
     return {
       description: description,
       trackedAt: trackedAt,
-      city: city,
-      state: state,
-      country: country,
+      city: city?.toUpperCase(),
+      state: state?.toUpperCase(),
+      country: country.toUpperCase(),
     };
   });
 
   return events.reverse();
-}
+};

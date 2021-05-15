@@ -3,19 +3,17 @@ import fetch from "node-fetch";
 export interface Tracking {
   code: string;
   events: Event[];
-  // isDelivered?: boolean;
-  // postedAt?: Date;
-  // updatedAt?: Date;
+  isDelivered?: boolean;
+  postedAt?: Date;
+  updatedAt?: Date;
 }
 
 interface Event {
   description: string;
-  // country?: string;
-  // state?: string;
-  // city?: string;
-  // trackedAt: Date;
-  // observation: string;
-  // trackedAt: string;
+  country?: string;
+  state?: string;
+  city?: string;
+  trackedAt: Date;
 }
 
 export const track = (codes: string[]) => requestTracking(codes);

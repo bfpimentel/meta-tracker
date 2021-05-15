@@ -11,6 +11,7 @@
     "@types/cheerio": "^0.22.28",
     "cheerio": "^1.0.0-rc.9",
     "iconv-lite": "^0.6.2",
+    "moment": "^2.29.1",
     "next": "10.2.0",
     "next-themes": "^0.0.14",
     "react": "17.0.2",
@@ -18,6 +19,7 @@
   },
   "devDependencies": {
     "@types/iconv-lite": "^0.0.1",
+    "@types/moment": "^2.13.0",
     "@types/node-fetch": "^2.5.10",
     "@types/react": "^17.0.5",
     "autoprefixer": "^10.2.5",
