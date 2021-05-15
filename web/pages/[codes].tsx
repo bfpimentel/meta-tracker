@@ -1,23 +1,30 @@
 import Head from "next/head";
 import { track } from "@/data/repository";
 import { InferGetStaticPropsType } from "next";
+import moment from "moment";
 
 const Trackings = ({
   trackings,
 }: InferGetStaticPropsType<typeof getServerSideProps>) => (
-  <div className="flex flex-col items-center justify-center w-screen h-screen py-4 px-2">
+  <div className="flex flex-col items-center justify-center">
     <Head>
       <title>Meta Tracker</title>
       <link rel="icon" href="/favicon.ico" />
     </Head>
 
-    <main className="max-w-1/3 h-full">
+    <main className="flex flex-col max-w-3xl py-4 px-2">
       <p className="text-4xl text-center font-semibold">Meta Tracker</p>
       {trackings.map((tracking) => (
         <div key={tracking.code}>
+          <div className="border-t mt-4"></div>
           <p className="text-xl mt-4 font-bold">{tracking.code}</p>
           {tracking.events.map((event, index) => (
-            <p key={index}>{event.description}</p>
+            <div key={index} className="mt-2">
+              <p className="text-gray-500">
+                {moment(event.trackedAt).format("DD/MM/yyyy [às] HH:mm")}
+              </p>
+              <p>{event.description}</p>
+            </div>
           ))}
         </div>
       ))}

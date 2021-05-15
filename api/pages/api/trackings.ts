@@ -11,19 +11,17 @@ interface TrackingRequestBody {
 interface Tracking {
   code: string;
   events: Event[];
-  // isDelivered?: boolean;
-  // postedAt?: Date;
-  // updatedAt?: Date;
+  isDelivered?: boolean;
+  postedAt?: Date;
+  updatedAt?: Date;
 }
 
 interface Event {
   description: string;
-  // country?: string;
-  // state?: string;
-  // city?: string;
-  // trackedAt: Date;
-  // observation: string;
-  // trackedAt: string;
+  country: string;
+  state?: string;
+  city?: string;
+  trackedAt: Date;
 }
 
 export default async (
@@ -31,15 +29,16 @@ export default async (
   response: NextApiResponse<Tracking[]>
 ) => {
   const requestBody: TrackingRequestBody = request.body;
-  response.status(200).json(await track(requestBody.codes));
+  response.status(200).json(await getAllTrackings(requestBody.codes));
 };
 
-const track = (codes: string[]) => Promise.all(codes.map(requestTracking));
+const getAllTrackings = (codes: string[]) =>
+  Promise.all(codes.map(getTracking));
 
 const isCodeInputValid = (code: string) =>
   /^[A-Z]{2}[0-9]{9}[A-Z]{2}$/.test(code);
 
-async function requestTracking(code: string): Promise<Tracking> {
+const getTracking = async (code: string): Promise<Tracking> => {
   try {
     const form = new FormData();
     form.append("objetos", code);
@@ -67,24 +66,25 @@ async function requestTracking(code: string): Promise<Tracking> {
 
       const events = getEvents(decodedResponse);
 
-      const [firstEvent, lastEvent] = [events[events.length - 1], events[0]];
+      const [firstEvent, lastEvent] = [events[0], events[events.length - 1]];
 
       return {
         code: code,
-        events: events.map((event) => ({
-          description: event.description,
-        })),
+        postedAt: firstEvent.trackedAt,
+        updatedAt: lastEvent.trackedAt,
+        isDelivered: lastEvent.description.includes("Objeto entregue"),
+        events: events,
       };
     });
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-function getEvents(html: string) {
+const getEvents = (html: string): Event[] => {
   const $ = cheerio.load(html);
   const columns = $(".listEvent").find("tbody").find("tr").toArray();
-  const unparsedEvents = columns.map((column) => {
+  const data = columns.map((column) => {
     const data = $(column)
       .find("td")
       .toArray()
@@ -98,122 +98,37 @@ function getEvents(html: string) {
     return data;
   });
 
-  // const steps = lines.toArray().map((line) => {
-  //   console.log(`LINE: ${line}`);
+  const events = data.map((line) => {
+    const trackedAt = new Date(
+      line[0][0].split("/").reverse().join("-").concat(` ${line[0][1]} -3`)
+    );
 
-  //   const lineData = document(line)
-  //     .find("td")
-  //     .toArray()
-  //     .map((column) =>
-  //       document(column)
-  //         .text()
-  //         .replace(/[\n\r\t]/g, "")
-  //         .trim()
-  //     )
-  //     .filter((data) => !!data)
-  //     .map((data) => data.split(/\s\s+/g));
+    const places = line[0][2].split("/").map((place) => place.trim());
 
-  //   console.log(`LINEDATA: ${lineData}`);
+    let country = places[1] ? null : places[0];
 
-  //   return {
-  //     // locale: lineData[0][2].toLowerCase(),
-  //     status: lineData[1][0].toLowerCase(),
-  //     // observation: lineData[1][1] ? lineData[1][1].toLowerCase() : null,
-  //     // trackedAt: new Date(
-  //     //   lineData[0][0]
-  //     //     .split("/")
-  //     //     .reverse()
-  //     //     .join("-")
-  //     //     .concat(` ${lineData[0][1]} -3`)
-  //     // ),
-  //   };
-  // });
+    const [city, state] = country ? [null, null] : [places[0], places[1]];
 
-  const events = unparsedEvents.reverse().map((event) => {
-    let description = event[1][0];
+    if (!country) {
+      country = "BRASIL";
+    }
 
-    if (event[1][1]) {
-      description =
-        description.replace(" - por favor aguarde", " ") + event[1][1];
+    let description = line[1][0];
+
+    if (line[1][1]) {
+      const subdescription = line[1].slice(1).join(" ");
+      description = description.replace(" - por favor aguarde", " ");
+      description += subdescription;
     }
 
     return {
       description: description,
+      trackedAt: trackedAt,
+      city: city?.toUpperCase(),
+      state: state?.toUpperCase(),
+      country: country.toUpperCase(),
     };
   });
 
-  //   {
-  // const local = eventLog[0][2].split("/");
-  // const event = {
-  //   data: eventLog[0][0],
-  //   dataHora: `${eventLog[0][0]} ${eventLog[0][1]}`,
-  //   status: eventLog[1][0],
-  //   cidade: local[0].trim(),
-  //   uf: local[1].trim(),
-  // };
-  // if (eventLog[1][1]) {
-  //   const destino = eventLog[1][1].split(" ");
-  //   event.destino = {
-  //     cidade: destino[destino.length - 3],
-  //     uf: destino[destino.length - 1],
-  //   };
-  // }
-  //   });
-
-  return events;
-}
-
-// function parseHtmlToData(html: string): Step[] {
-//   const document = cheerio.load(html);
-//   const lines = document(".listEvent").find("tr");
-
-//   // const steps2 = lines.toArray().flatMap((line) => {
-//   //   document(line).find(".sroLbEvent").find("strong").text;
-//   // });
-
-// const steps = lines.toArray().map((line) => {
-//   console.log(`LINE: ${line}`);
-
-//   const lineData = document(line)
-//     .find("td")
-//     .toArray()
-//     .map((column) =>
-//       document(column)
-//         .text()
-//         .replace(/[\n\r\t]/g, "")
-//         .trim()
-//     )
-//     .filter((data) => !!data)
-//     .map((data) => data.split(/\s\s+/g));
-
-//   console.log(`LINEDATA: ${lineData}`);
-
-//   return {
-//     // locale: lineData[0][2].toLowerCase(),
-//     status: lineData[1][0].toLowerCase(),
-//     // observation: lineData[1][1] ? lineData[1][1].toLowerCase() : null,
-//     // trackedAt: new Date(
-//     //   lineData[0][0]
-//     //     .split("/")
-//     //     .reverse()
-//     //     .join("-")
-//     //     .concat(` ${lineData[0][1]} -3`)
-//     // ),
-//   };
-// });
-
-//   console.log(steps.map(({ status }) => status).join());
-
-//   if (!steps.length) return null;
-
-//   const [firstTrack, lastTrack] = [steps[steps.length - 1], steps[0]];
-
-//   return steps.reverse();
-
-//   // return {
-//   //   steps: steps.reverse(),
-//   //   //   isDelivered: lastTrack.status.includes("objeto entregue"),
-//   //   //   postedAt: firstTrack.trackedAt,
-//   //   //   updatedAt: lastTrack.trackedAt,
-//   // };
-// }
+  return events.reverse();
+};
