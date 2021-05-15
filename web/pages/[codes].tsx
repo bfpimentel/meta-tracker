@@ -11,7 +11,7 @@ const Trackings = ({
       <link rel="icon" href="/favicon.ico" />
     </Head>
 
-    <main className="w-1/3">
+    <main className="max-w-1/3">
       <p className="text-4xl text-center font-semibold">Meta Tracker</p>
       {trackings.map((tracking) => (
         <div key={tracking.code}>
