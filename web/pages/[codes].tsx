@@ -1,26 +1,9 @@
-import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { InferGetStaticPropsType } from "next";
-import { useTheme } from "next-themes";
 import { track } from "@/data/repository";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 import moment from "moment";
 
-export default function Trackings({
-  trackings,
-}: InferGetStaticPropsType<typeof getServerSideProps>) {
-  const { theme, setTheme } = useTheme();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  });
-
-  const switchTheme = () => {
-    if (isMounted) {
-      setTheme(theme === "light" ? "dark" : "light");
-    }
-  };
-
+export default function Trackings({ trackings }) {
   return (
     <div className="flex flex-col items-center justify-center">
       <Head>
@@ -28,15 +11,10 @@ export default function Trackings({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex flex-col max-w-3xl py-4 px-2">
+      <main className="flex flex-col max-w-3xl py-4 px-2 w-full">
         <div className="flex flex-row justify-between">
           <p className="text-4xl text-center font-semibold">Meta Tracker</p>
-          <button
-            onClick={switchTheme}
-            className="p-2 rounded-md font-bold bg-black text-white dark:bg-white dark:text-black"
-          >
-            Give me {theme === "light" ? "Darkness" : "Light"}
-          </button>
+          <ThemeSwitcher />
         </div>
         {trackings.map((tracking) => (
           <div key={tracking.code}>

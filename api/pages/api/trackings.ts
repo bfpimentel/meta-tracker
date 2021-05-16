@@ -35,9 +35,6 @@ export default async (
 const getAllTrackings = (codes: string[]) =>
   Promise.all(codes.map(getTracking));
 
-const isCodeInputValid = (code: string) =>
-  /^[A-Z]{2}[0-9]{9}[A-Z]{2}$/.test(code);
-
 const getTracking = async (code: string): Promise<Tracking> => {
   try {
     const form = new FormData();
