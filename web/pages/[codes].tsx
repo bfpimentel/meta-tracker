@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { useTheme } from "next-themes";
 import { track } from "@/data/repository";
-import { InferGetStaticPropsType } from "next";
+import { InferGetServerSidePropsType } from "next";
 import moment from "moment";
 
 const Trackings = ({
   trackings,
-}: InferGetStaticPropsType<typeof getServerSideProps>) => {
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const { theme, setTheme } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
 
