@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
+import { InferGetStaticPropsType } from "next";
 import { useTheme } from "next-themes";
 import { track } from "@/data/repository";
-import { InferGetServerSidePropsType } from "next";
 import moment from "moment";
 
-const Trackings = ({
+export default function Trackings({
   trackings,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+}: InferGetStaticPropsType<typeof getServerSideProps>) {
   const { theme, setTheme } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -55,7 +55,7 @@ const Trackings = ({
       </main>
     </div>
   );
-};
+}
 
 export const getServerSideProps = async (context: {
   params: { codes: string };
@@ -69,5 +69,3 @@ export const getServerSideProps = async (context: {
     },
   };
 };
-
-export default Trackings;

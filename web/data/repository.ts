@@ -8,7 +8,7 @@ export interface Tracking {
   updatedAt?: Date;
 }
 
-interface Event {
+export interface Event {
   description: string;
   country?: string;
   state?: string;
