@@ -3,10 +3,7 @@ import cheerio from "cheerio";
 import iconv from "iconv-lite";
 import fetch from "node-fetch";
 import FormData from "form-data";
-
-interface TrackingRequestBody {
-  codes: string[];
-}
+import rateLimiter from "@/caching/rate-limiter";
 
 interface TrackingResponseBody {
   code: string;
@@ -69,7 +66,18 @@ interface EventResponseBody {
   trackedAt: Date;
 }
 
+const limiter = rateLimiter();
+
 export default async (request: NextApiRequest, response: NextApiResponse) => {
+  try {
+    await limiter.check(response, 10, "GET_TRACKINGS_CACHE_TOKEN");
+  } catch {
+    response.status(429).json({
+      code: 429,
+      error: "Limite de requisições excedido, tente novamente mais tarde.",
+    });
+  }
+
   try {
     const query = request.query["codes"];
 

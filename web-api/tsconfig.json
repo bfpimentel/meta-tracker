@@ -13,6 +13,7 @@
             "@/assets/*": ["assets/*"],
             "@/data/*": ["data/*"],
             "@/entity/*": ["entity/*"],
+            "@/caching/*": ["caching/*"],
         },
         "typeRoots": ["node_modules/@types", "src/types"],
         "target": "es5",
