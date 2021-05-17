@@ -8,15 +8,49 @@ interface TrackingRequestBody {
   codes: string[];
 }
 
-interface Tracking {
+interface TrackingResponseBody {
   code: string;
-  events: Event[];
-  isDelivered?: boolean;
-  postedAt?: Date;
-  updatedAt?: Date;
+  isDelivered: boolean;
+  isTracked: boolean;
+  events: TrackingEventResponseBody[];
 }
 
-interface Event {
+class Tracked implements TrackingResponseBody {
+  code: string;
+  isDelivered: boolean;
+  isTracked: boolean;
+  postedAt: Date;
+  updatedAt: Date;
+  events: TrackingEventResponseBody[];
+
+  constructor(code: string, events: TrackingEventResponseBody[]) {
+    this.code = code;
+    this.isTracked = true;
+
+    const [firstEvent, lastEvent] = [events[0], events[events.length - 1]];
+
+    this.postedAt = firstEvent.trackedAt;
+    this.updatedAt = lastEvent.trackedAt;
+    this.isDelivered = lastEvent.description.includes("Objeto entregue");
+    this.events = events;
+  }
+}
+
+class NotTrackedYet implements TrackingResponseBody {
+  code: string;
+  isDelivered: boolean;
+  isTracked: boolean;
+  events: TrackingEventResponseBody[];
+
+  constructor(code: string) {
+    this.code = code;
+    this.isDelivered = false;
+    this.isTracked = false;
+    this.events = [];
+  }
+}
+
+interface TrackingEventResponseBody {
   description: string;
   country: string;
   state?: string;
@@ -24,61 +58,56 @@ interface Event {
   trackedAt: Date;
 }
 
-export default async (
-  request: NextApiRequest,
-  response: NextApiResponse<Tracking[]>
-) => {
-  const requestBody: TrackingRequestBody = request.body;
-  response.status(200).json(await getAllTrackings(requestBody.codes));
-};
-
-const getAllTrackings = (codes: string[]) =>
-  Promise.all(codes.map(getTracking));
-
-const getTracking = async (code: string): Promise<Tracking> => {
+export default async (request: NextApiRequest, response: NextApiResponse) => {
   try {
-    const form = new FormData();
-    form.append("objetos", code);
-
-    const options = {
-      method: "POST",
-      body: form,
-    };
-
-    const response = fetch(
-      "https://www2.correios.com.br/sistemas/rastreamento/resultado_semcontent.cfm",
-      options
-    );
-
-    return response.then(async (response) => {
-      //   if (!response.ok) {
-      //     throw new Error("Erro ao rastrear objeto.");
-      //   }
-
-      const decodedResponse = await response
-        .arrayBuffer()
-        .then((arrayBuffer) =>
-          iconv.decode(Buffer.from(arrayBuffer), "iso-8859-1").toString()
-        );
-
-      const events = getEvents(decodedResponse);
-
-      const [firstEvent, lastEvent] = [events[0], events[events.length - 1]];
-
-      return {
-        code: code,
-        postedAt: firstEvent.trackedAt,
-        updatedAt: lastEvent.trackedAt,
-        isDelivered: lastEvent.description.includes("Objeto entregue"),
-        events: events,
-      };
-    });
+    const requestBody: TrackingRequestBody = request.body;
+    const trackings = await getAllTrackings(requestBody.codes);
+    response.status(200).json(trackings);
   } catch (error) {
-    console.error(error);
+    response.status(503).json({
+      code: 503,
+      error: "",
+    });
   }
 };
 
-const getEvents = (html: string): Event[] => {
+const getAllTrackings = (codes: string[]): Promise<TrackingResponseBody[]> =>
+  Promise.all(codes.map(getTracking));
+
+const getTracking = async (code: string): Promise<TrackingResponseBody> => {
+  const form = new FormData();
+  form.append("objetos", code);
+
+  const options = {
+    method: "POST",
+    body: form,
+  };
+
+  const response = fetch(
+    "https://www2.correios.com.br/sistemas/rastreamento/resultado_semcontent.cfm",
+    options
+  );
+
+  return response.then(async (response) => {
+    const decodedResponse = await response
+      .arrayBuffer()
+      .then((arrayBuffer) =>
+        iconv.decode(Buffer.from(arrayBuffer), "iso-8859-1").toString()
+      );
+
+    const events = getEvents(decodedResponse);
+
+    if (events.length == 0) {
+      return new NotTrackedYet(code);
+    }
+
+    const [firstEvent, lastEvent] = [events[0], events[events.length - 1]];
+
+    return new Tracked(code, events);
+  });
+};
+
+const getEvents = (html: string) => {
   const $ = cheerio.load(html);
   const columns = $(".listEvent").find("tbody").find("tr").toArray();
   const data = columns.map((column) => {
@@ -95,36 +124,42 @@ const getEvents = (html: string): Event[] => {
     return data;
   });
 
-  const events = data.map((line) => {
-    const trackedAt = new Date(
-      line[0][0].split("/").reverse().join("-").concat(` ${line[0][1]} -3`)
-    );
+  let events = data.flatMap((line) => {
+    try {
+      let trackedAt = new Date(
+        line[0][0].split("/").reverse().join("-").concat(` ${line[0][1]} -3`)
+      );
 
-    const places = line[0][2].split("/").map((place) => place.trim());
+      const places = line[0][2].split("/").map((place) => place.trim());
 
-    let country = places[1] ? null : places[0];
+      let country = places[1] ? null : places[0];
 
-    const [city, state] = country ? [null, null] : [places[0], places[1]];
+      const [city, state] = country ? [null, null] : [places[0], places[1]];
 
-    if (!country) {
-      country = "BRASIL";
+      if (!country) {
+        country = "BRASIL";
+      }
+
+      let description = line[1][0];
+
+      if (line[1][1]) {
+        const subdescription = line[1].slice(1).join(" ");
+        description = description.replace(" - por favor aguarde", " ");
+        description += subdescription;
+      }
+
+      return [
+        {
+          description: description,
+          trackedAt: trackedAt,
+          city: city?.toUpperCase(),
+          state: state?.toUpperCase(),
+          country: country.toUpperCase(),
+        },
+      ];
+    } catch {
+      return [];
     }
-
-    let description = line[1][0];
-
-    if (line[1][1]) {
-      const subdescription = line[1].slice(1).join(" ");
-      description = description.replace(" - por favor aguarde", " ");
-      description += subdescription;
-    }
-
-    return {
-      description: description,
-      trackedAt: trackedAt,
-      city: city?.toUpperCase(),
-      state: state?.toUpperCase(),
-      country: country.toUpperCase(),
-    };
   });
 
   return events.reverse();

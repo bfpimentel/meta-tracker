@@ -74,10 +74,9 @@ export default function Home() {
         </button>
       </main>
 
-      <footer
-        className="flex flox-row justify-between max-w-3xl w-full border-t py-4 px-2
-        border-black border-opacity-10 dark:border-white dark:border-opacity-10"
-      ></footer>
+      <footer className="flex flex-col justify-between py-4 px-2 max-w-3xl w-full">
+        <div className="border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
+      </footer>
     </div>
   );
 }

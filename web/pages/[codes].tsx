@@ -11,7 +11,7 @@ export default function Trackings({ trackings }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex flex-col max-w-3xl py-4 px-2 w-full">
+      <main className="flex flex-col max-w-3xl py-4 px-2">
         <div className="flex flex-row justify-between">
           <p className="text-4xl text-center font-semibold">Meta Tracker</p>
           <ThemeSwitcher />
