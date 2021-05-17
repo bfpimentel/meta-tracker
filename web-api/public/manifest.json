@@ -2,7 +2,7 @@
     "name": "Meta Tracker",
     "short_name": "Meta",
     "theme_color": "#000000",
-    "background_color": "#ffffff",
+    "background_color": "#000000",
     "display": "fullscreen",
     "scope": "/",
     "start_url": "/",
