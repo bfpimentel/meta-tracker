@@ -10,9 +10,9 @@ interface TrackingRequestBody {
 
 interface TrackingResponseBody {
   code: string;
-  isDelivered: boolean;
   isTracked: boolean;
-  events: TrackingEventResponseBody[];
+  events: EventResponseBody[];
+  errorMessage?: string;
 }
 
 class Tracked implements TrackingResponseBody {
@@ -21,9 +21,9 @@ class Tracked implements TrackingResponseBody {
   isTracked: boolean;
   postedAt: Date;
   updatedAt: Date;
-  events: TrackingEventResponseBody[];
+  events: EventResponseBody[];
 
-  constructor(code: string, events: TrackingEventResponseBody[]) {
+  constructor(code: string, events: EventResponseBody[]) {
     this.code = code;
     this.isTracked = true;
 
@@ -38,19 +38,30 @@ class Tracked implements TrackingResponseBody {
 
 class NotTrackedYet implements TrackingResponseBody {
   code: string;
-  isDelivered: boolean;
   isTracked: boolean;
-  events: TrackingEventResponseBody[];
+  events: EventResponseBody[];
 
   constructor(code: string) {
     this.code = code;
-    this.isDelivered = false;
     this.isTracked = false;
     this.events = [];
   }
 }
 
-interface TrackingEventResponseBody {
+class TrackingError implements TrackingResponseBody {
+  code: string;
+  isTracked: boolean;
+  events: EventResponseBody[];
+  errorMessage: string;
+
+  constructor(code: string, errorMessage: string) {
+    this.code = code;
+    this.errorMessage = errorMessage;
+    this.isTracked = false;
+  }
+}
+
+interface EventResponseBody {
   description: string;
   country: string;
   state?: string;
@@ -60,13 +71,23 @@ interface TrackingEventResponseBody {
 
 export default async (request: NextApiRequest, response: NextApiResponse) => {
   try {
-    const requestBody: TrackingRequestBody = request.body;
-    const trackings = await getAllTrackings(requestBody.codes);
+    const query = request.query["codes"];
+
+    if (Array.isArray(query)) {
+      return response.status(503).json({
+        code: 400,
+        error:
+          "Sintaxe de requisição inválida, use vírgulas para separar os códigos, ex: trackings?codes=AB111111111BR,CD222222222BR",
+      });
+    }
+
+    const codes = query.split(",");
+    const trackings = await getAllTrackings(codes);
     response.status(200).json(trackings);
   } catch (error) {
     response.status(503).json({
       code: 503,
-      error: "",
+      error: "Serviço indisponível",
     });
   }
 };
@@ -75,6 +96,10 @@ const getAllTrackings = (codes: string[]): Promise<TrackingResponseBody[]> =>
   Promise.all(codes.map(getTracking));
 
 const getTracking = async (code: string): Promise<TrackingResponseBody> => {
+  if (isCodeNotValid(code)) {
+    return new TrackingError(code, "Código inválido");
+  }
+
   const form = new FormData();
   form.append("objetos", code);
 
@@ -100,8 +125,6 @@ const getTracking = async (code: string): Promise<TrackingResponseBody> => {
     if (events.length == 0) {
       return new NotTrackedYet(code);
     }
-
-    const [firstEvent, lastEvent] = [events[0], events[events.length - 1]];
 
     return new Tracked(code, events);
   });
@@ -164,3 +187,6 @@ const getEvents = (html: string) => {
 
   return events.reverse();
 };
+
+const isCodeNotValid = (code: string) =>
+  !/^[A-Z]{2}[0-9]{9}[A-Z]{2}$/.test(code);

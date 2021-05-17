@@ -3,9 +3,11 @@ import fetch from "node-fetch";
 export interface Tracking {
   code: string;
   events: Event[];
-  isDelivered?: boolean;
+  isTracked: boolean;
+  isDelivered: boolean;
   postedAt?: Date;
   updatedAt?: Date;
+  errorMessage?: string;
 }
 
 export interface Event {
@@ -20,14 +22,18 @@ export const track = (codes: string[]) => requestTracking(codes);
 
 async function requestTracking(codes: string[]): Promise<Tracking[]> {
   const options = {
-    method: "POST",
-    body: JSON.stringify({ codes: codes }),
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   };
 
-  const response = fetch(`${process.env.SERVER_BASE_URL}/trackings`, options);
+  const query = new URLSearchParams({ codes: codes.join(",") });
+
+  const response = fetch(
+    `${process.env.SERVER_BASE_URL}/trackings?${query}`,
+    options
+  );
 
   return response.then(async (response) => {
     const trackings = (await response.json()) as Tracking[];
