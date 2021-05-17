@@ -1,14 +1,11 @@
 import React, { FunctionComponent } from "react";
-import Head from "next/head";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import Header from "./Header";
 
 const Page: FunctionComponent<{}> = ({ children }) => {
   return (
     <div className="flex flex-col items-center justify-between min-h-screen">
-      <Head>
-        <title>Meta Tracker</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Header />
 
       <main className="flex flex-col max-w-3xl py-4 px-2">
         <div className="flex flex-row justify-between">
