@@ -1,11 +1,11 @@
 import React, { FunctionComponent } from "react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import Header from "./Header";
+import Head from "@/components/Head";
 
 const Page: FunctionComponent<{}> = ({ children }) => {
   return (
-    <div className="flex flex-col items-center justify-between min-h-screen">
-      <Header />
+    <div className="flex flex-col items-center justify-between h-screen">
+      <Head />
 
       <main className="flex flex-col max-w-3xl py-4 px-2">
         <div className="flex flex-row justify-between">

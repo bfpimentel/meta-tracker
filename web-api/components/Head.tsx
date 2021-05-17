@@ -1,7 +1,7 @@
-import Head from "next/head";
+import * as NextHead from "next/head";
 
 const Header = () => (
-  <Head>
+  <NextHead.default>
     <link rel="apple-touch-icon" sizes="57x57" href="/icons/icon-57x57.png" />
     <link rel="apple-touch-icon" sizes="60x60" href="/icons/icon-60x60.png" />
     <link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png" />
@@ -62,7 +62,7 @@ const Header = () => (
 
     <title>Meta Tracker</title>
     <link rel="icon" href="/favicon.ico" />
-  </Head>
+  </NextHead.default>
 );
 
 export default Header;
