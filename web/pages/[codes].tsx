@@ -40,7 +40,7 @@ const EventsList: FunctionComponent<{ tracking: Tracking }> = ({
   if (tracking.errorMessage) {
     return (
       <p className="mt-2">
-        Não foi possível exibir informações para o código informado, motivo:{" "}
+        Não foi possível exibir informações para o código informado. Motivo:{" "}
         {tracking.errorMessage}
       </p>
     );
