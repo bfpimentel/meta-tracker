@@ -1,41 +1,27 @@
-import Head from "next/head";
-import {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  InferGetServerSidePropsType,
-} from "next";
+import { FunctionComponent } from "react";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { track, Tracking } from "@/data/repository";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
 import moment from "moment";
 
 export default function Trackings({
   trackings,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <div className="flex flex-col items-center justify-center">
-      <Head>
-        <title>Meta Tracker</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className="flex flex-col max-w-3xl py-4 px-2">
-        <div className="flex flex-row justify-between">
-          <p className="text-4xl text-center font-semibold">Meta Tracker</p>
-          <ThemeSwitcher />
+    <>
+      {trackings.map((tracking) => (
+        <div key={tracking.code}>
+          <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
+          <p className="text-xl mt-4 font-bold">{tracking.code}</p>
+          <EventsList tracking={tracking} />
         </div>
-        {trackings.map((tracking) => (
-          <div key={tracking.code}>
-            <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
-            <p className="text-xl mt-4 font-bold">{tracking.code}</p>
-            <EventsList tracking={tracking} />
-          </div>
-        ))}
-      </main>
-    </div>
+      ))}
+    </>
   );
 }
 
-function EventsList({ tracking }: { tracking: Tracking }) {
+const EventsList: FunctionComponent<{ tracking: Tracking }> = ({
+  tracking,
+}) => {
   if (tracking.isTracked) {
     return (
       <>
@@ -70,7 +56,7 @@ function EventsList({ tracking }: { tracking: Tracking }) {
       Adicionalmente, verifique se informou o código correto.
     </p>
   );
-}
+};
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const codes = context.params.codes as string;

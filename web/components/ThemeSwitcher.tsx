@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
-export default function ThemeSwitcher() {
+const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -23,4 +23,6 @@ export default function ThemeSwitcher() {
       {theme === "light" ? "Dark" : "Light"}
     </button>
   );
-}
+};
+
+export default ThemeSwitcher;
