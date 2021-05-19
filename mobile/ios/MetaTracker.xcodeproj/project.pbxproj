@@ -89,15 +89,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7905417126549B9900A6123A /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				79CFA5982653058300FA8442 /* iOS */,
+				79CFA59F2653058300FA8442 /* macOS */,
+				79CFA58B2653058200FA8442 /* Shared */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		7905417226549BAE00A6123A /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				79CFA5A92653058300FA8442 /* Tests iOS */,
+				79CFA5B42653058300FA8442 /* Tests macOS */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
 		79CFA5862653058200FA8442 = {
 			isa = PBXGroup;
 			children = (
-				79CFA58B2653058200FA8442 /* Shared */,
-				79CFA5982653058300FA8442 /* iOS */,
-				79CFA59F2653058300FA8442 /* macOS */,
-				79CFA5A92653058300FA8442 /* Tests iOS */,
-				79CFA5B42653058300FA8442 /* Tests macOS */,
 				79CFA5972653058300FA8442 /* Products */,
+				7905417126549B9900A6123A /* Sources */,
+				7905417226549BAE00A6123A /* Tests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -485,7 +501,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ELTTE7K8TT;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = iOS/Info.plist;
+				INFOPLIST_FILE = Sources/iOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -508,7 +524,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ELTTE7K8TT;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = iOS/Info.plist;
+				INFOPLIST_FILE = Sources/iOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -529,13 +545,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Sources/macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ELTTE7K8TT;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = macOS/Info.plist;
+				INFOPLIST_FILE = Sources/macOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -554,13 +570,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Sources/macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ELTTE7K8TT;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = macOS/Info.plist;
+				INFOPLIST_FILE = Sources/macOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -580,7 +596,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ELTTE7K8TT;
-				INFOPLIST_FILE = "Tests iOS/Info.plist";
+				INFOPLIST_FILE = "Tests/Tests iOS/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -602,7 +618,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ELTTE7K8TT;
-				INFOPLIST_FILE = "Tests iOS/Info.plist";
+				INFOPLIST_FILE = "Tests/Tests iOS/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -626,7 +642,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ELTTE7K8TT;
-				INFOPLIST_FILE = "Tests macOS/Info.plist";
+				INFOPLIST_FILE = "Tests/Tests macOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -648,7 +664,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ELTTE7K8TT;
-				INFOPLIST_FILE = "Tests macOS/Info.plist";
+				INFOPLIST_FILE = "Tests/Tests macOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
