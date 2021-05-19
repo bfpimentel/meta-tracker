@@ -16,11 +16,31 @@ let package = Package(
       targets: ["MetaTrackerLib"])
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.18.0")
+    .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.18.0"),
+    .package(
+      name: "SnapshotTesting", url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
+      from: "1.9.0"),
   ],
   targets: [
-    .target(name: "DatabaseClient"),
-    .target(name: "APIClient"),
+    .target(
+      name: "DatabaseClient",
+      dependencies: [
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+      ]
+    ),
+    .target(
+      name: "APIClient",
+      dependencies: [
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+      ]
+    ),
+    .testTarget(
+      name: "APIClientTests",
+      dependencies: [
+        "APIClient",
+        "SnapshotTesting",
+      ]
+    ),
 
     .target(
       name: "MetaTrackerLib",

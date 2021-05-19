@@ -48,6 +48,16 @@
                ReferencedContainer = "container:MetaTrackerLib">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "APIClientTests"
+               BuildableName = "APIClientTests"
+               BlueprintName = "APIClientTests"
+               ReferencedContainer = "container:MetaTrackerLib">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
