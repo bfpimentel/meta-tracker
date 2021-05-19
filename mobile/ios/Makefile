@@ -2,6 +2,14 @@
 test:
 	@bundle exec fastlane test
 
+.PHONY: core-data-gen
+core-data-gen:
+	@swiftgen run coredata \
+		Sources/Shared/CoreData/MetaTracker.xcdatamodeld \
+		--templateName swift5 \
+		--output Sources/Shared/CoreData/CoreData.generated.swif
+
+
 .PHONY: format
 format:
 	@swift format \
