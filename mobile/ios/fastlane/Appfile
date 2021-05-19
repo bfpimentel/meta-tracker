@@ -1,0 +1,8 @@
+app_identifier("br.dev.native.metatracker") # The bundle identifier of your app
+apple_id("grsouza@pm.me") # Your Apple email address
+
+itc_team_id("122311443") # App Store Connect Team ID
+team_id("ELTTE7K8TT") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile

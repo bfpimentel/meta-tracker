@@ -1,0 +1,10 @@
+default_platform(:ios)
+
+platform :ios do
+  desc 'Push a new beta build to TestFlight'
+  lane :beta do
+    sync_code_signing(type: 'appstore')
+    build_app(scheme: 'MetaTracker (iOS)')
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+  end
+end
