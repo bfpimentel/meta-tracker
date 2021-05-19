@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7905418626549CA400A6123A /* MetaTrackerLib in Frameworks */ = {isa = PBXBuildFile; productRef = 7905418526549CA400A6123A /* MetaTrackerLib */; };
+		7905418826549CAA00A6123A /* MetaTrackerLib in Frameworks */ = {isa = PBXBuildFile; productRef = 7905418726549CAA00A6123A /* MetaTrackerLib */; };
 		79CFA5AB2653058300FA8442 /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA5AA2653058300FA8442 /* Tests_iOS.swift */; };
 		79CFA5B62653058300FA8442 /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA5B52653058300FA8442 /* Tests_macOS.swift */; };
 		79CFA5B82653058300FA8442 /* MetaTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA58C2653058200FA8442 /* MetaTracker.xcdatamodeld */; };
@@ -39,6 +41,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7905417F26549C9800A6123A /* MetaTrackerLib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MetaTrackerLib; sourceTree = "<group>"; };
 		79CFA58D2653058200FA8442 /* Shared.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Shared.xcdatamodel; sourceTree = "<group>"; };
 		79CFA58E2653058200FA8442 /* MetaTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetaTrackerApp.swift; sourceTree = "<group>"; };
 		79CFA58F2653058200FA8442 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -62,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7905418626549CA400A6123A /* MetaTrackerLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7905418826549CAA00A6123A /* MetaTrackerLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,12 +113,21 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		7905418426549CA400A6123A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		79CFA5862653058200FA8442 = {
 			isa = PBXGroup;
 			children = (
+				7905417F26549C9800A6123A /* MetaTrackerLib */,
 				79CFA5972653058300FA8442 /* Products */,
 				7905417126549B9900A6123A /* Sources */,
 				7905417226549BAE00A6123A /* Tests */,
+				7905418426549CA400A6123A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -191,6 +205,9 @@
 			dependencies = (
 			);
 			name = "MetaTracker (iOS)";
+			packageProductDependencies = (
+				7905418526549CA400A6123A /* MetaTrackerLib */,
+			);
 			productName = "MetaTracker (iOS)";
 			productReference = 79CFA5962653058300FA8442 /* MetaTracker.app */;
 			productType = "com.apple.product-type.application";
@@ -208,6 +225,9 @@
 			dependencies = (
 			);
 			name = "MetaTracker (macOS)";
+			packageProductDependencies = (
+				7905418726549CAA00A6123A /* MetaTrackerLib */,
+			);
 			productName = "MetaTracker (macOS)";
 			productReference = 79CFA59E2653058300FA8442 /* MetaTracker.app */;
 			productType = "com.apple.product-type.application";
@@ -728,6 +748,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7905418526549CA400A6123A /* MetaTrackerLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MetaTrackerLib;
+		};
+		7905418726549CAA00A6123A /* MetaTrackerLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MetaTrackerLib;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		79CFA58C2653058200FA8442 /* MetaTracker.xcdatamodeld */ = {
