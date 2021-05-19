@@ -30,7 +30,21 @@ public struct AppView: View {
     self.store = store
   }
 
+  @State private var text = ""
+  @State private var items: [String] = []
+
   public var body: some View {
-    Text("Hello World")
+    SearchNavigation(text: $text) {
+      withAnimation { items.append(text) }
+    } cancel: {
+      text = ""
+    } content: {
+      List(items, id: \.self) { item in
+        Text(item)
+      }
+      .listStyle(PlainListStyle())
+      .navigationTitle("Meta Tracker")
+    }
+    .edgesIgnoringSafeArea(.top)
   }
 }
