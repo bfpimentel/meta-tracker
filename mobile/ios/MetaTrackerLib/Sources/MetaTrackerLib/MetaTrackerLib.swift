@@ -77,7 +77,6 @@ public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, ac
     return .none
   }
 }
-.debug()
 
 public struct AppView: View {
   let store: Store<AppState, AppAction>
