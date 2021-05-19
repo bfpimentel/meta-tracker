@@ -11,22 +11,22 @@ import SwiftUI
 
 @main
 struct MetaTrackerApp: App {
-    var body: some Scene {
-        WindowGroup {
-            AppView(
-                store: Store(
-                    initialState: AppState(),
-                    reducer: appReducer,
-                    environment: AppEnvironment.live
-                )
-            )
-        }
+  var body: some Scene {
+    WindowGroup {
+      AppView(
+        store: Store(
+          initialState: AppState(),
+          reducer: appReducer,
+          environment: AppEnvironment.live
+        )
+      )
     }
+  }
 }
 
 extension AppEnvironment {
-    static let live = Self(
-        api: .live,
-        db: .live
-    )
+  static let live = Self(
+    api: .live,
+    db: .live
+  )
 }
