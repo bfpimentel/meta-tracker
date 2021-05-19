@@ -26,7 +26,7 @@ struct MetaTrackerApp: App {
 
 extension AppEnvironment {
     static let live = Self(
-        api: .init(),
+        api: .live,
         db: .live
     )
 }
