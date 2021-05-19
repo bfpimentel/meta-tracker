@@ -7,4 +7,9 @@ platform :ios do
     build_app(scheme: 'MetaTracker (iOS)')
     upload_to_testflight(skip_waiting_for_build_processing: true)
   end
+
+  desc 'Run tests'
+  lane :test do
+    scan(scheme: 'MetaTracker (iOS)')
+  end
 end
