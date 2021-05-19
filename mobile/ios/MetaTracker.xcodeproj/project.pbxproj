@@ -9,16 +9,16 @@
 /* Begin PBXBuildFile section */
 		7905418626549CA400A6123A /* MetaTrackerLib in Frameworks */ = {isa = PBXBuildFile; productRef = 7905418526549CA400A6123A /* MetaTrackerLib */; };
 		7905418826549CAA00A6123A /* MetaTrackerLib in Frameworks */ = {isa = PBXBuildFile; productRef = 7905418726549CAA00A6123A /* MetaTrackerLib */; };
+		798C124726550C22001408FB /* CoreData.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798C124626550C22001408FB /* CoreData.generated.swift */; };
+		798C124826550C22001408FB /* CoreData.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798C124626550C22001408FB /* CoreData.generated.swift */; };
 		79CFA5AB2653058300FA8442 /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA5AA2653058300FA8442 /* Tests_iOS.swift */; };
 		79CFA5B62653058300FA8442 /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA5B52653058300FA8442 /* Tests_macOS.swift */; };
 		79CFA5B82653058300FA8442 /* MetaTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA58C2653058200FA8442 /* MetaTracker.xcdatamodeld */; };
 		79CFA5B92653058300FA8442 /* MetaTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA58C2653058200FA8442 /* MetaTracker.xcdatamodeld */; };
 		79CFA5BA2653058300FA8442 /* MetaTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA58E2653058200FA8442 /* MetaTrackerApp.swift */; };
 		79CFA5BB2653058300FA8442 /* MetaTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA58E2653058200FA8442 /* MetaTrackerApp.swift */; };
-		79CFA5BC2653058300FA8442 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA58F2653058200FA8442 /* ContentView.swift */; };
-		79CFA5BD2653058300FA8442 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA58F2653058200FA8442 /* ContentView.swift */; };
-		79CFA5BE2653058300FA8442 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA5902653058200FA8442 /* Persistence.swift */; };
-		79CFA5BF2653058300FA8442 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA5902653058200FA8442 /* Persistence.swift */; };
+		79CFA5BE2653058300FA8442 /* LiveDatabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA5902653058200FA8442 /* LiveDatabaseClient.swift */; };
+		79CFA5BF2653058300FA8442 /* LiveDatabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA5902653058200FA8442 /* LiveDatabaseClient.swift */; };
 		79CFA5C02653058300FA8442 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79CFA5912653058300FA8442 /* Assets.xcassets */; };
 		79CFA5C12653058300FA8442 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79CFA5912653058300FA8442 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -42,10 +42,10 @@
 
 /* Begin PBXFileReference section */
 		7905417F26549C9800A6123A /* MetaTrackerLib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MetaTrackerLib; sourceTree = "<group>"; };
+		798C124626550C22001408FB /* CoreData.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreData.generated.swift; sourceTree = "<group>"; };
 		79CFA58D2653058200FA8442 /* Shared.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Shared.xcdatamodel; sourceTree = "<group>"; };
 		79CFA58E2653058200FA8442 /* MetaTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetaTrackerApp.swift; sourceTree = "<group>"; };
-		79CFA58F2653058200FA8442 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		79CFA5902653058200FA8442 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		79CFA5902653058200FA8442 /* LiveDatabaseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveDatabaseClient.swift; sourceTree = "<group>"; };
 		79CFA5912653058300FA8442 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		79CFA5962653058300FA8442 /* MetaTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetaTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79CFA5992653058300FA8442 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -120,6 +120,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		798C124526550C22001408FB /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				79CFA58C2653058200FA8442 /* MetaTracker.xcdatamodeld */,
+				798C124626550C22001408FB /* CoreData.generated.swift */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
 		79CFA5862653058200FA8442 = {
 			isa = PBXGroup;
 			children = (
@@ -134,11 +143,10 @@
 		79CFA58B2653058200FA8442 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				79CFA58E2653058200FA8442 /* MetaTrackerApp.swift */,
-				79CFA58F2653058200FA8442 /* ContentView.swift */,
-				79CFA5902653058200FA8442 /* Persistence.swift */,
 				79CFA5912653058300FA8442 /* Assets.xcassets */,
-				79CFA58C2653058200FA8442 /* MetaTracker.xcdatamodeld */,
+				798C124526550C22001408FB /* CoreData */,
+				79CFA58E2653058200FA8442 /* MetaTrackerApp.swift */,
+				79CFA5902653058200FA8442 /* LiveDatabaseClient.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -353,9 +361,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				79CFA5B82653058300FA8442 /* MetaTracker.xcdatamodeld in Sources */,
-				79CFA5BE2653058300FA8442 /* Persistence.swift in Sources */,
+				79CFA5BE2653058300FA8442 /* LiveDatabaseClient.swift in Sources */,
 				79CFA5BA2653058300FA8442 /* MetaTrackerApp.swift in Sources */,
-				79CFA5BC2653058300FA8442 /* ContentView.swift in Sources */,
+				798C124726550C22001408FB /* CoreData.generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,9 +372,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				79CFA5B92653058300FA8442 /* MetaTracker.xcdatamodeld in Sources */,
-				79CFA5BF2653058300FA8442 /* Persistence.swift in Sources */,
+				79CFA5BF2653058300FA8442 /* LiveDatabaseClient.swift in Sources */,
 				79CFA5BB2653058300FA8442 /* MetaTrackerApp.swift in Sources */,
-				79CFA5BD2653058300FA8442 /* ContentView.swift in Sources */,
+				798C124826550C22001408FB /* CoreData.generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
