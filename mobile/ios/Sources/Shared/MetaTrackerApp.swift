@@ -27,6 +27,7 @@ struct MetaTrackerApp: App {
 extension AppEnvironment {
   static let live = Self(
     api: .live,
-    db: .live
+    db: .live,
+    mainQueue: DispatchQueue.main.eraseToAnyScheduler()
   )
 }

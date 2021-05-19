@@ -14,8 +14,8 @@ public struct TrackingResponse: Decodable {
   public let code: String
   public let isTracked: Bool
   public let isDelivered: Bool?
-  public let postedAt: Date?
-  public let updatedAt: Date?
+  //  public let postedAt: Date?
+  //  public let updatedAt: Date?
   public let events: [Event]
   public let errorMessage: String?
 
@@ -24,6 +24,6 @@ public struct TrackingResponse: Decodable {
     public let country: String
     public let state: String?
     public let city: String?
-    public let trackedAt: Date
+    //    public let trackedAt: Date
   }
 }
