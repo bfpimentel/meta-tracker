@@ -27,7 +27,10 @@ let package = Package(
         
         .target(
             name: "MetaTrackerLib",
-            dependencies: []),
+            dependencies: [
+                "APIClient",
+                "DatabaseClient",
+            ]
         .testTarget(
             name: "MetaTrackerLibTests",
             dependencies: ["MetaTrackerLib"]),
