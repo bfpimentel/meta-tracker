@@ -48,11 +48,11 @@ public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, ac
 
   case .searchCommited:
     struct CancellationId: Hashable {}
-    state.isSearchInFlight = true
 
+    state.isSearchInFlight = true
     return env.api
       .trackings(state.searchText.components(separatedBy: ","))
-      .cancellable(id: CancellationId())
+      .cancellable(id: CancellationId(), cancelInFlight: true)
       .receive(on: env.mainQueue)
       .mapError { $0 as NSError }
       .map {
