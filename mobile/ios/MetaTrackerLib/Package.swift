@@ -39,6 +39,9 @@ let package = Package(
       dependencies: [
         "APIClient",
         "SnapshotTesting",
+      ],
+      exclude: [
+        "__Snapshots__"
       ]
     ),
 
