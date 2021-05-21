@@ -1,7 +1,10 @@
 import ComposableArchitecture
 import Foundation
 import MetaTrackerLib
+import Models
 import XCTest
+
+@testable import APIClient
 
 extension AppEnvironment {
   static let failing = Self(
@@ -51,10 +54,12 @@ final class AppViewTests: XCTestCase {
       environment: .failing
     )
 
+    let event = Tracking.Event.stub()
+
     store.assert(
-      .send(.searchResults(.success(["event 01"]))) {
+      .send(.searchResults(.success([event]))) {
         $0.isSearchInFlight = false
-        $0.items = ["event 01"]
+        $0.items = [event]
       }
     )
   }
@@ -75,4 +80,14 @@ final class AppViewTests: XCTestCase {
   }
 
   // TODO: Test `searchCommited` action.
+}
+
+extension Tracking.Event {
+
+  static func stub() -> Tracking.Event {
+    Tracking.Event(
+      description: "",
+      trackedAt: Date()
+    )
+  }
 }

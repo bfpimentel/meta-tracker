@@ -20,10 +20,8 @@ extension APIClient {
 
 extension Effect where Output == (Data, HTTPURLResponse) {
   func apiDecoded<T: Decodable>(to type: T.Type = T.self) -> Effect<T, Error> {
-    tryMap { data, _ in
-      try decoder.decode(type, from: data)
-    }
-    .eraseToEffect()
+    tryMap { data, _ in try data.apiDecoded() }
+      .eraseToEffect()
   }
 }
 
@@ -39,6 +37,15 @@ private func apiRequest(_ route: Route) -> Effect<(Data, HTTPURLResponse), Error
 
 private let decoder = { () -> JSONDecoder in
   var decoder = JSONDecoder()
-  decoder.dateDecodingStrategy = .iso8601
+  let formatter = DateFormatter()
+  formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.000Z"
+  decoder.dateDecodingStrategy = .formatted(formatter)
   return decoder
 }()
+
+extension Data {
+
+  public func apiDecoded<T: Decodable>(as type: T.Type = T.self) throws -> T {
+    try decoder.decode(type, from: self)
+  }
+}

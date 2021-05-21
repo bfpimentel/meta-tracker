@@ -31,7 +31,8 @@ let package = Package(
     .target(
       name: "APIClient",
       dependencies: [
-        .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        "Models",
       ]
     ),
     .testTarget(
@@ -50,6 +51,7 @@ let package = Package(
       dependencies: [
         "APIClient",
         "DatabaseClient",
+        "Models",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
       ]
     ),
@@ -57,5 +59,7 @@ let package = Package(
       name: "MetaTrackerLibTests",
       dependencies: ["MetaTrackerLib"]),
 
+    // Models
+    .target(name: "Models"),
   ]
 )

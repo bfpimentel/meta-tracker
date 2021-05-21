@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import MetaTrackerLib
+import OSLog
 import SwiftUI
 
 @main
@@ -28,6 +29,7 @@ extension AppEnvironment {
   static let live = Self(
     api: .live,
     db: .live,
-    mainQueue: DispatchQueue.main.eraseToAnyScheduler()
+    mainQueue: DispatchQueue.main.eraseToAnyScheduler(),
+    log: Logger(subsystem: Bundle.main.bundleIdentifier ?? "br.dev.native.metatracker", category: "main")
   )
 }

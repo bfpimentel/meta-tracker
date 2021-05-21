@@ -1,17 +1,19 @@
 import APIClient
 import ComposableArchitecture
 import DatabaseClient
+import Models
+import OSLog
 import SwiftUI
 
 public struct AppState: Equatable {
 
   public var searchText: String
-  public var items: [String]
+  public var items: [Tracking.Event]
   public var isSearchInFlight: Bool
 
   public init(
     searchText: String = "",
-    items: [String] = [],
+    items: [Tracking.Event] = [],
     isSearchInFlight: Bool = false
   ) {
     self.searchText = searchText
@@ -25,18 +27,25 @@ public enum AppAction: Equatable {
   case searchCommited
   case searchCanceled
 
-  case searchResults(Result<[String], NSError>)
+  case searchResults(Result<[Tracking.Event], NSError>)
 }
 
 public struct AppEnvironment {
   public var api: APIClient
   public var db: DatabaseClient
   public var mainQueue: AnySchedulerOf<DispatchQueue>
+  public var log: Logger
 
-  public init(api: APIClient, db: DatabaseClient, mainQueue: AnySchedulerOf<DispatchQueue>) {
+  public init(
+    api: APIClient,
+    db: DatabaseClient,
+    mainQueue: AnySchedulerOf<DispatchQueue>,
+    log: Logger
+  ) {
     self.api = api
     self.db = db
     self.mainQueue = mainQueue
+    self.log = log
   }
 }
 
@@ -57,8 +66,8 @@ public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, ac
       .mapError { $0 as NSError }
       .map {
         $0.flatMap {
-          $0.events.map(\.description)
-            .joined(separator: "\n")
+          $0.events
+            .sorted { $0.trackedAt > $1.trackedAt }
         }
       }
       .catchToEffect()
@@ -72,7 +81,7 @@ public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, ac
     state.isSearchInFlight = false
     return .none
 
-  case .searchResults(.failure):
+  case let .searchResults(.failure(error)):
     state.isSearchInFlight = false
     return .none
   }
@@ -100,10 +109,9 @@ public struct AppView: View {
           if viewStore.isSearchInFlight {
             ProgressView()
           } else {
-            List(viewStore.items, id: \.self) { item in
-              Text(item)
+            List {
+              ForEach(viewStore.items, content: rowView)
             }
-            .listStyle(PlainListStyle())
           }
         }
         .navigationTitle("Meta Tracker")
@@ -111,4 +119,22 @@ public struct AppView: View {
       .edgesIgnoringSafeArea(.top)
     }
   }
+
+  private func rowView(_ model: Tracking.Event) -> some View {
+    VStack(alignment: .leading, spacing: 4) {
+      Text(model.description)
+      Text(dateFormatter.string(from: model.trackedAt))
+        .font(.caption)
+        .foregroundColor(.secondary)
+    }
+    .padding(.vertical, 8)
+  }
 }
+
+let dateFormatter = { () -> DateFormatter in
+  let formatter = DateFormatter()
+  formatter.locale = Locale(identifier: "pt_BR")
+  formatter.dateStyle = .short
+  formatter.timeStyle = .short
+  return formatter
+}()
