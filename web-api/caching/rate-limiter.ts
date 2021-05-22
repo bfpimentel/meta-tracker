@@ -1,13 +1,10 @@
 import type { NextApiResponse } from "next";
 import LRU from "lru-cache";
 
-const rateLimiter = (
-  interval: number = 60000,
-  uniqueTokenPerInterval: number = 500
-) => {
+const createRateLimiter = (interval: number = 60000, uniqueTokenPerInterval: number = 500) => {
   const tokenCache = new LRU({
     max: uniqueTokenPerInterval,
-    maxAge: interval,
+    maxAge: interval
   });
 
   return {
@@ -22,14 +19,11 @@ const rateLimiter = (
         const currentUsage = tokenCount[0];
         const isRateLimited = currentUsage >= limit;
         response.setHeader("X-RateLimit-Limit", limit);
-        response.setHeader(
-          "X-RateLimit-Remaining",
-          isRateLimited ? 0 : limit - currentUsage
-        );
+        response.setHeader("X-RateLimit-Remaining", isRateLimited ? 0 : limit - currentUsage);
 
         return isRateLimited ? reject() : resolve();
-      }),
+      })
   };
 };
 
-export default rateLimiter;
+export default createRateLimiter;
