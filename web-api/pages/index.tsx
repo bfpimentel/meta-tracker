@@ -145,7 +145,7 @@ class Home extends React.Component<{}, HomeState> {
             onChange={(event) => this.setCode(event.currentTarget.value)}
             placeholder="AB111111111BR"
             className="
-              p-2 mt-4 bg-transparent border rounded-md 
+              p-2 mt-4 bg-transparent border rounded-md outline-none
               border-black border-opacity-10 focus:border-black focus:border-opacity-80
               dark:border-white dark:border-opacity-10 dark:focus:border-white dark:focus:border-opacity-80 
             "
