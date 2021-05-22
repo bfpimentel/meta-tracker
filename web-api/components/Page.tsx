@@ -7,7 +7,7 @@ const Page: FunctionComponent<{}> = ({ children }) => {
     <div className="flex flex-col items-center justify-between h-screen">
       <Head />
 
-      <main className="flex flex-col max-w-3xl pt-8 pb-4 px-2">
+      <main className="flex flex-col max-w-3xl w-full pt-8 pb-4 px-2">
         <div className="flex flex-row justify-between">
           <p className="text-4xl text-center font-semibold">Meta Tracker</p>
           <ThemeSwitcher />

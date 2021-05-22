@@ -1,6 +1,7 @@
 import React from "react";
 import { track, Tracking } from "@/data/repository";
 import moment from "moment";
+import CircleLoading from "react-loading";
 
 type TrackingViewData = {
   name: string;
@@ -29,7 +30,8 @@ type StoredTracking = {
 type HomeState = {
   name: string;
   code: string;
-  error: string;
+  isLoading: boolean;
+  validationErrorMessage: string;
   isButtonDisabled: boolean;
   trackings: TrackingViewData[];
 };
@@ -43,10 +45,29 @@ class Home extends React.Component<{}, HomeState> {
     this.state = {
       name: "",
       code: "",
-      error: "",
+      validationErrorMessage: "",
+      isLoading: false,
       isButtonDisabled: true,
       trackings: []
     };
+  }
+
+  componentDidMount() {
+    this.isMounted = true;
+    this.storedTrackings = JSON.parse(localStorage.getItem("trackings")) || [];
+    this.fetchTrackings();
+  }
+
+  componentWillUnmount() {
+    this.state = {
+      name: "",
+      code: "",
+      validationErrorMessage: "",
+      isLoading: false,
+      isButtonDisabled: true,
+      trackings: []
+    };
+    this.isMounted = false;
   }
 
   fetchTrackings() {
@@ -59,29 +80,23 @@ class Home extends React.Component<{}, HomeState> {
       return trackings;
     }
 
-    const codes = this.storedTrackings.map((tracking) => tracking.code);
-    const fetchedTrackings = getTrackings(codes);
+    this.setState({ isLoading: true }, () => {
+      const codes = this.storedTrackings.map((tracking) => tracking.code);
+      const fetchedTrackings = getTrackings(codes);
 
-    fetchedTrackings.then((trackings) => {
-      if (this.isMounted)
-        this.setState({
-          trackings: trackings.map((tracking) => ({
-            name: this.storedTrackings.find((storedTracking) => storedTracking.code == tracking.code).name,
-            ...tracking
-          }))
-        });
+      fetchedTrackings
+        .then((trackings) => {
+          if (this.isMounted)
+            this.setState({
+              isLoading: false,
+              trackings: trackings.map((tracking) => ({
+                name: this.storedTrackings.find((storedTracking) => storedTracking.code == tracking.code).name,
+                ...tracking
+              }))
+            });
+        })
+        .catch((error) => this.setState({ isLoading: false }));
     });
-  }
-
-  componentDidMount() {
-    this.isMounted = true;
-    this.storedTrackings = JSON.parse(localStorage.getItem("trackings")) || [];
-    this.fetchTrackings();
-  }
-
-  componentWillUnmount() {
-    this.state = { name: "", code: "", error: "", isButtonDisabled: true, trackings: [] };
-    this.isMounted = false;
   }
 
   setCode(code: string) {
@@ -110,13 +125,15 @@ class Home extends React.Component<{}, HomeState> {
     const isButtonDisabled = trackingAlreadyExists || isCodeNotValid || isNameNotValid;
 
     this.setState({
-      error: getErrorMessage(),
+      validationErrorMessage: getErrorMessage(),
       isButtonDisabled: isButtonDisabled
     });
   }
 
   submitNewTracking() {
     const newTracking = { code: this.state.code, name: this.state.name };
+
+    this.setState({ code: "", name: "" });
 
     if (this.storedTrackings) this.storedTrackings.push(newTracking);
     else this.storedTrackings = [newTracking];
@@ -129,20 +146,14 @@ class Home extends React.Component<{}, HomeState> {
   render() {
     return (
       <>
-        <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
-        <p className="text-xl mt-4">
-          Meta Tracker é uma aplicação open-source desenvolvida para explorar tecnologias e facilitar o rastreamento de
-          encomendas dos Correios do Brasil.
-          <br />
-          Todos os dados são de posse do usuário, então, a aplicação não guarda informações na nuvem.
-          <br />
-          Esse é um projeto em progresso.
-        </p>
+        {/* <Description /> */}
         <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
         <p className="text-xl mt-4">Insira abaixo um código a ser rastreado, acompanhado de um nome:</p>
         <div className="grid md:grid-cols-2 sm:grid-cols-1 items-stretch md:space-x-4 sm:space-x-0">
           <input
             onChange={(event) => this.setCode(event.currentTarget.value)}
+            value={this.state.code}
+            maxLength={13}
             placeholder="AB111111111BR"
             className="
               p-2 mt-4 bg-transparent border rounded-md outline-none
@@ -152,6 +163,8 @@ class Home extends React.Component<{}, HomeState> {
           ></input>
           <input
             onChange={(event) => this.setName(event.currentTarget.value)}
+            value={this.state.name}
+            maxLength={40}
             placeholder="Bugiganga"
             className="
               p-2 mt-4 bg-transparent border rounded-md outline-none
@@ -161,7 +174,7 @@ class Home extends React.Component<{}, HomeState> {
           ></input>
         </div>
         <div className="flex mt-4 items-center justify-items-stretch">
-          <ValidationError errorMessage={this.state.error} />
+          <ValidationError errorMessage={this.state.validationErrorMessage} />
           <button
             onClick={() => this.submitNewTracking()}
             disabled={this.state.isButtonDisabled}
@@ -170,11 +183,42 @@ class Home extends React.Component<{}, HomeState> {
             Rastrear
           </button>
         </div>
-        <Trackings trackings={this.state.trackings} />
+        <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
+        <MainBody isLoading={this.state.isLoading} trackings={this.state.trackings} />
       </>
     );
   }
 }
+
+const Description: React.FunctionComponent<{}> = () => {
+  return (
+    <>
+      <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
+      <p className="text-xl mt-4">
+        Meta Tracker é uma aplicação open-source desenvolvida para explorar tecnologias e facilitar o rastreamento de
+        encomendas dos Correios do Brasil.
+        <br />
+        Todos os dados são de posse do usuário, então, a aplicação não guarda informações na nuvem.
+        <br />
+        Esse é um projeto em progresso.
+      </p>
+    </>
+  );
+};
+
+const MainBody: React.FunctionComponent<{ isLoading: boolean; trackings: TrackingViewData[] }> = ({
+  isLoading,
+  trackings
+}) => {
+  return (
+    <div className="self-center">
+      {(() => {
+        if (isLoading) return <CircleLoading />;
+        else return <Trackings trackings={trackings} />;
+      })()}
+    </div>
+  );
+};
 
 const Trackings: React.FunctionComponent<{ trackings: TrackingViewData[] }> = ({ trackings }) => {
   if (!trackings) {
@@ -183,21 +227,26 @@ const Trackings: React.FunctionComponent<{ trackings: TrackingViewData[] }> = ({
 
   return (
     <>
-      {trackings.map((tracking) => (
+      {trackings.map((tracking, index) => (
         <div key={tracking.code}>
-          <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
-          <div className="flex mt-4">
-            <p className="flex-grow text-xl font-bold">{tracking.name}</p>
-            <p className="text-xl font-bold">{tracking.code}</p>
+          <div className="flex flex-col sm:flex-row mt-4">
+            <p className="text-xl font-bold mr-2 text-gray-600 dark:text-gray-400">{tracking.code}</p>
+            <p className="text-xl font-bold">{tracking.name}</p>
           </div>
-          <EventsList tracking={tracking} />
+          <Events tracking={tracking} />
+          {(() => {
+            if (index == trackings.length - 1) return <></>;
+            return (
+              <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
+            );
+          })()}
         </div>
       ))}
     </>
   );
 };
 
-const EventsList: React.FunctionComponent<{ tracking: TrackingViewData }> = ({ tracking }) => {
+const Events: React.FunctionComponent<{ tracking: TrackingViewData }> = ({ tracking }) => {
   if (tracking.isTracked) {
     return (
       <>
