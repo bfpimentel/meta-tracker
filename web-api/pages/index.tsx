@@ -1,6 +1,6 @@
-import React, { Component, FunctionComponent, useEffect, useState } from "react";
+import React from "react";
 import { track, Tracking } from "@/data/repository";
-import moment, { invalid } from "moment";
+import moment from "moment";
 
 type TrackingViewData = {
   name: string;
@@ -34,7 +34,7 @@ type HomeState = {
   trackings: TrackingViewData[];
 };
 
-class Home extends Component<{}, HomeState> {
+class Home extends React.Component<{}, HomeState> {
   storedTrackings: StoredTracking[] = [];
   isMounted = false;
 
@@ -85,25 +85,33 @@ class Home extends Component<{}, HomeState> {
   }
 
   setCode(code: string) {
-    this.setState({ code: code });
-    this.updateState();
+    this.setState({ code: code }, () => this.updateState());
   }
 
   setName(name: string) {
-    this.setState({ name: name });
-    this.updateState();
+    this.setState({ name: name }, () => this.updateState());
   }
 
   updateState() {
     const storedTracking = this.storedTrackings.find(
       (storedTracking) => storedTracking.code == this.state.code || storedTracking.name == this.state.name
     );
-    const isCodeNotValid = !/^[A-Z]{2}[0-9]{9}[A-Z]{2}$/.test(this.state.code);
+
     const trackingAlreadyExists = !!storedTracking;
+    const isCodeNotValid = !/^[A-Z]{2}[0-9]{9}[A-Z]{2}$/.test(this.state.code);
+    const isNameNotValid = !this.state.name;
+
+    const getErrorMessage = () => {
+      if (isCodeNotValid) return "Insira um código válido.";
+      if (trackingAlreadyExists) return "Uma encomenda com esse código ou nome já existe.";
+      return "";
+    };
+
+    const isButtonDisabled = trackingAlreadyExists || isCodeNotValid || isNameNotValid;
 
     this.setState({
-      error: trackingAlreadyExists ? "O código ou nome inserido já está salvo." : "",
-      isButtonDisabled: trackingAlreadyExists || isCodeNotValid
+      error: getErrorMessage(),
+      isButtonDisabled: isButtonDisabled
     });
   }
 
@@ -132,21 +140,21 @@ class Home extends Component<{}, HomeState> {
         </p>
         <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
         <p className="text-xl mt-4">Insira abaixo um código a ser rastreado, acompanhado de um nome:</p>
-        <div className="col-auto place-items-stretch md:space-x-4 sm:space-y-4">
+        <div className="grid md:grid-cols-2 sm:grid-cols-1 items-stretch md:space-x-4 sm:space-x-0">
           <input
-            onChange={(event) => this.setCode(event.target.value)}
+            onChange={(event) => this.setCode(event.currentTarget.value)}
             placeholder="AB111111111BR"
             className="
-              lg:flex-grow md:flex-grow sm:flex-grow-0 p-2 mt-4 bg-transparent border rounded-md 
+              p-2 mt-4 bg-transparent border rounded-md 
               border-black border-opacity-10 focus:border-black focus:border-opacity-80
               dark:border-white dark:border-opacity-10 dark:focus:border-white dark:focus:border-opacity-80 
             "
           ></input>
           <input
-            onChange={(event) => this.setName(event.target.value)}
+            onChange={(event) => this.setName(event.currentTarget.value)}
             placeholder="Bugiganga"
             className="
-              lg:flex-grow md:flex-grow sm:flex-grow-0 p-2 mt-4 bg-transparent border rounded-md outline-none
+              p-2 mt-4 bg-transparent border rounded-md outline-none
               border-black border-opacity-10 focus:border-black focus:border-opacity-80
               dark:border-white dark:border-opacity-10 dark:focus:border-white dark:focus:border-opacity-80 
             "
@@ -168,7 +176,7 @@ class Home extends Component<{}, HomeState> {
   }
 }
 
-const Trackings: FunctionComponent<{ trackings: TrackingViewData[] }> = ({ trackings }) => {
+const Trackings: React.FunctionComponent<{ trackings: TrackingViewData[] }> = ({ trackings }) => {
   if (!trackings) {
     return <></>;
   }
@@ -189,7 +197,7 @@ const Trackings: FunctionComponent<{ trackings: TrackingViewData[] }> = ({ track
   );
 };
 
-const EventsList: FunctionComponent<{ tracking: TrackingViewData }> = ({ tracking }) => {
+const EventsList: React.FunctionComponent<{ tracking: TrackingViewData }> = ({ tracking }) => {
   if (tracking.isTracked) {
     return (
       <>
@@ -224,7 +232,7 @@ const EventsList: FunctionComponent<{ tracking: TrackingViewData }> = ({ trackin
   );
 };
 
-const ValidationError: FunctionComponent<{ errorMessage: string }> = ({ errorMessage }) => {
+const ValidationError: React.FunctionComponent<{ errorMessage: string }> = ({ errorMessage }) => {
   if (errorMessage) {
     return <p className="flex-grow text-red-500">{errorMessage}</p>;
   }
