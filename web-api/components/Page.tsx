@@ -17,10 +17,7 @@ const Page: FunctionComponent<{}> = ({ children }) => {
 
       <footer className="flex flex-col justify-between py-4 px-2 max-w-3xl w-full">
         <div className="border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
-        <a
-          href="https://github.com/bfpimentel/meta-tracker"
-          className="self-center "
-        >
+        <a href="https://github.com/bfpimentel/meta-tracker" className="self-center ">
           <button className="mt-4 p-2 rounded-md font-bold bg-black text-white dark:bg-white dark:text-black">
             Contribua com o projeto!
           </button>
