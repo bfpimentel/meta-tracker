@@ -1,6 +1,6 @@
 import React, { Component, FunctionComponent, useEffect, useState } from "react";
 import { track, Tracking } from "@/data/repository";
-import moment from "moment";
+import moment, { invalid } from "moment";
 
 type TrackingViewData = {
   name: string;
@@ -21,20 +21,36 @@ type EventViewData = {
   trackedAt: Date;
 };
 
-class Home extends Component<{}, { name: string; code: string; trackings: TrackingViewData[] }> {
+type StoredTracking = {
+  code: string;
+  name: string;
+};
+
+type HomeState = {
+  name: string;
+  code: string;
+  error: string;
+  isButtonDisabled: boolean;
+  trackings: TrackingViewData[];
+};
+
+class Home extends Component<{}, HomeState> {
+  storedTrackings: StoredTracking[] = [];
   isMounted = false;
 
-  constructor(props) {
+  constructor(props: {}) {
     super(props);
     this.state = {
       name: "",
       code: "",
+      error: "",
+      isButtonDisabled: true,
       trackings: []
     };
   }
 
   fetchTrackings() {
-    if (!localStorage.getItem("trackings")) {
+    if (!this.storedTrackings) {
       return;
     }
 
@@ -43,15 +59,14 @@ class Home extends Component<{}, { name: string; code: string; trackings: Tracki
       return trackings;
     }
 
-    const storedTrackings: { name: string; code: string }[] = JSON.parse(localStorage.getItem("trackings"));
-    const codes = storedTrackings.map((tracking) => tracking.code);
+    const codes = this.storedTrackings.map((tracking) => tracking.code);
     const fetchedTrackings = getTrackings(codes);
 
     fetchedTrackings.then((trackings) => {
       if (this.isMounted)
         this.setState({
           trackings: trackings.map((tracking) => ({
-            name: storedTrackings.find((storedTracking) => storedTracking.code == tracking.code).name,
+            name: this.storedTrackings.find((storedTracking) => storedTracking.code == tracking.code).name,
             ...tracking
           }))
         });
@@ -60,27 +75,48 @@ class Home extends Component<{}, { name: string; code: string; trackings: Tracki
 
   componentDidMount() {
     this.isMounted = true;
+    this.storedTrackings = JSON.parse(localStorage.getItem("trackings")) || [];
     this.fetchTrackings();
   }
 
   componentWillUnmount() {
-    this.state = { name: "", code: "", trackings: [] };
+    this.state = { name: "", code: "", error: "", isButtonDisabled: true, trackings: [] };
     this.isMounted = false;
   }
 
-  isCodeNotValid = (code: string) => !/^[A-Z]{2}[0-9]{9}[A-Z]{2}$/.test(code);
+  setCode(code: string) {
+    this.setState({ code: code });
+    this.updateState();
+  }
 
-  submit = () => {
-    let storedTrackings: { name: string; code: string }[] = JSON.parse(localStorage.getItem("trackings"));
+  setName(name: string) {
+    this.setState({ name: name });
+    this.updateState();
+  }
 
+  updateState() {
+    const storedTracking = this.storedTrackings.find(
+      (storedTracking) => storedTracking.code == this.state.code || storedTracking.name == this.state.name
+    );
+    const isCodeNotValid = !/^[A-Z]{2}[0-9]{9}[A-Z]{2}$/.test(this.state.code);
+    const trackingAlreadyExists = !!storedTracking;
+
+    this.setState({
+      error: trackingAlreadyExists ? "O código ou nome inserido já está salvo." : "",
+      isButtonDisabled: trackingAlreadyExists || isCodeNotValid
+    });
+  }
+
+  submitNewTracking() {
     const newTracking = { code: this.state.code, name: this.state.name };
 
-    if (storedTrackings) storedTrackings.push(newTracking);
-    else storedTrackings = [newTracking];
+    if (this.storedTrackings) this.storedTrackings.push(newTracking);
+    else this.storedTrackings = [newTracking];
 
-    localStorage.setItem("trackings", JSON.stringify(storedTrackings));
+    localStorage.setItem("trackings", JSON.stringify(this.storedTrackings));
+
     this.fetchTrackings();
-  };
+  }
 
   render() {
     return (
@@ -96,29 +132,32 @@ class Home extends Component<{}, { name: string; code: string; trackings: Tracki
         </p>
         <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
         <p className="text-xl mt-4">Insira abaixo um código a ser rastreado, acompanhado de um nome:</p>
-        <div className="justify-center md:items-stretch sm:items-center md:flex-row sm:flex-col md:space-x-4 sm:space-y-4">
+        <div className="col-auto place-items-stretch md:space-x-4 sm:space-y-4">
           <input
-            onChange={(event) => this.setState({ code: event.target.value })}
+            onChange={(event) => this.setCode(event.target.value)}
             placeholder="AB111111111BR"
             className="
-              p-2 mt-4 bg-transparent border rounded-md 
+              lg:flex-grow md:flex-grow sm:flex-grow-0 p-2 mt-4 bg-transparent border rounded-md 
               border-black border-opacity-10 focus:border-black focus:border-opacity-80
               dark:border-white dark:border-opacity-10 dark:focus:border-white dark:focus:border-opacity-80 
             "
           ></input>
           <input
-            onChange={(event) => this.setState({ name: event.target.value })}
+            onChange={(event) => this.setName(event.target.value)}
             placeholder="Bugiganga"
             className="
-              p-2 mt-4 bg-transparent border rounded-md outline-none
+              lg:flex-grow md:flex-grow sm:flex-grow-0 p-2 mt-4 bg-transparent border rounded-md outline-none
               border-black border-opacity-10 focus:border-black focus:border-opacity-80
               dark:border-white dark:border-opacity-10 dark:focus:border-white dark:focus:border-opacity-80 
             "
           ></input>
+        </div>
+        <div className="flex mt-4 items-center justify-items-stretch">
+          <ValidationError errorMessage={this.state.error} />
           <button
-            onClick={() => this.submit()}
-            disabled={!this.state.name || this.isCodeNotValid(this.state.code)}
-            className="md:self-stretch sm:self-end mt-4 p-2 rounded-md font-bold opacity-100 disabled:opacity-50 bg-black text-white dark:bg-white dark:text-black"
+            onClick={() => this.submitNewTracking()}
+            disabled={this.state.isButtonDisabled}
+            className="self-end p-2 rounded-md font-bold opacity-100 disabled:opacity-50 bg-black text-white dark:bg-white dark:text-black"
           >
             Rastrear
           </button>
@@ -139,9 +178,10 @@ const Trackings: FunctionComponent<{ trackings: TrackingViewData[] }> = ({ track
       {trackings.map((tracking) => (
         <div key={tracking.code}>
           <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
-          <p className="text-xl mt-4 font-bold">
-            {tracking.code}: {tracking.name}
-          </p>
+          <div className="flex mt-4">
+            <p className="flex-grow text-xl font-bold">{tracking.name}</p>
+            <p className="text-xl font-bold">{tracking.code}</p>
+          </div>
           <EventsList tracking={tracking} />
         </div>
       ))}
@@ -182,6 +222,14 @@ const EventsList: FunctionComponent<{ tracking: TrackingViewData }> = ({ trackin
       Adicionalmente, verifique se informou o código correto.
     </p>
   );
+};
+
+const ValidationError: FunctionComponent<{ errorMessage: string }> = ({ errorMessage }) => {
+  if (errorMessage) {
+    return <p className="flex-grow text-red-500">{errorMessage}</p>;
+  }
+
+  return <div className="flex-grow"></div>;
 };
 
 export default Home;
