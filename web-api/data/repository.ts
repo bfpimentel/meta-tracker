@@ -1,7 +1,4 @@
-import getConfig from "next/config";
 import fetch from "node-fetch";
-
-const { serverRuntimeConfig } = getConfig();
 
 export interface Tracking {
   code: string;
@@ -32,9 +29,6 @@ async function requestTracking(codes: string[]): Promise<Tracking[]> {
   };
 
   const query = new URLSearchParams({ codes: codes.join(",") });
-
-  // console.log(`SERVER_URL: ${serverRuntimeConfig.SERVER_BASE_URL}`);
-  // console.log(`${serverRuntimeConfig.SERVER_BASE_URL}/trackings?${query}`);
 
   const response = fetch(`api/trackings?${query}`, options);
 
