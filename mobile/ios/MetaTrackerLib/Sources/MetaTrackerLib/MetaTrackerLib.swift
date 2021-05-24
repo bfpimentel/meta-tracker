@@ -71,7 +71,7 @@ public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, ac
         }
       }
       .catchToEffect()
-      .map { AppAction.searchResults($0) }
+      .map(AppAction.searchResults)
 
   case .searchCanceled:
     state.isSearchInFlight = false
