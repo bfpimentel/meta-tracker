@@ -8,6 +8,9 @@
 import Combine
 import ComposableArchitecture
 import Foundation
+import OSLog
+
+let log = Logger(subsystem: "br.dev.native.metatracker.apiclient", category: "main")
 
 extension APIClient {
 
@@ -45,7 +48,12 @@ private let decoder = { () -> JSONDecoder in
 
 extension Data {
 
-  public func apiDecoded<T: Decodable>(as type: T.Type = T.self) throws -> T {
-    try decoder.decode(type, from: self)
+  func apiDecoded<T: Decodable>(as type: T.Type = T.self) throws -> T {
+    do {
+      return try decoder.decode(type, from: self)
+    } catch {
+      log.error("error decoding '\(T.self)': \(error as NSError)")
+      throw error
+    }
   }
 }
