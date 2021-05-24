@@ -34,13 +34,15 @@ final class AppViewTests: XCTestCase {
 
   func test_appView_searchCanceled_shouldClearSearchText() {
     let store = TestStore(
-      initialState: .init(searchText: "LE258050301SE"),
+      initialState: .init(searchText: "LE258050301SE", isSearchInFlight: true),
       reducer: appReducer,
       environment: .failing
     )
 
     store.assert(
-      .send(.searchCanceled),
+      .send(.searchCanceled) {
+        $0.isSearchInFlight = false
+      },
       .receive(.searchTextChanged("")) {
         $0.searchText = ""
       }

@@ -50,14 +50,14 @@ public struct AppEnvironment {
 }
 
 public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, env in
+  struct CancellationId: Hashable {}
+
   switch action {
   case .searchTextChanged(let text):
     state.searchText = text
     return .none
 
   case .searchCommited:
-    struct CancellationId: Hashable {}
-
     state.isSearchInFlight = true
     return env.api
       .trackings(state.searchText.components(separatedBy: ","))
@@ -74,7 +74,11 @@ public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, ac
       .map { AppAction.searchResults($0) }
 
   case .searchCanceled:
-    return .init(value: .searchTextChanged(""))
+    state.isSearchInFlight = false
+    return .concatenate(
+      .init(value: .searchTextChanged("")),
+      .cancel(id: CancellationId())
+    )
 
   case let .searchResults(.success(items)):
     state.items = items
