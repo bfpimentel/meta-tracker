@@ -1,4 +1,5 @@
 import APIClient
+import AnalyticsClient
 import ComposableArchitecture
 import DatabaseClient
 import Models
@@ -23,6 +24,7 @@ public struct AppState: Equatable {
 }
 
 public enum AppAction: Equatable {
+  case appDelegate(AppDelegateAction)
   case searchTextChanged(String)
   case searchCommited
   case searchCanceled
@@ -30,21 +32,28 @@ public enum AppAction: Equatable {
   case searchResults(Result<[Tracking.Event], NSError>)
 }
 
+public enum AppDelegateAction: Equatable {
+  case didFinishLaunching
+}
+
 public struct AppEnvironment {
   public var api: APIClient
   public var db: DatabaseClient
   public var mainQueue: AnySchedulerOf<DispatchQueue>
+  public var analytics: AnalyticsClient
   //  public var log: Logger
 
   public init(
     api: APIClient,
     db: DatabaseClient,
-    mainQueue: AnySchedulerOf<DispatchQueue>
-    //    log: Logger
+    mainQueue: AnySchedulerOf<DispatchQueue>,
+    analytics: AnalyticsClient
+      //    log: Logger
   ) {
     self.api = api
     self.db = db
     self.mainQueue = mainQueue
+    self.analytics = analytics
     //    self.log = log
   }
 }
@@ -53,6 +62,12 @@ public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, ac
   struct CancellationId: Hashable {}
 
   switch action {
+  case .appDelegate(.didFinishLaunching):
+    return .concatenate(
+      .fireAndForget { env.analytics.initialize() },
+      .fireAndForget { env.analytics.track(.appLaunched) }
+    )
+
   case .searchTextChanged(let text):
     state.searchText = text
     return .none

@@ -13,15 +13,19 @@ let package = Package(
     // Products define the executables and libraries a package produces, and make them visible to other packages.
     .library(
       name: "MetaTrackerLib",
-      targets: ["MetaTrackerLib"])
+      targets: ["MetaTrackerLib"]),
+    .library(name: "AppTelemetryClient", targets: ["AppTelemetryClient"]),
   ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.18.0"),
     .package(
       name: "SnapshotTesting", url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
       from: "1.9.0"),
+    .package(
+      name: "TelemetryClient", url: "https://github.com/AppTelemetry/SwiftClient", from: "1.0.13"),
   ],
   targets: [
+    .target(name: "AnalyticsClient"),
     .target(
       name: "DatabaseClient",
       dependencies: [
@@ -47,9 +51,18 @@ let package = Package(
     ),
 
     .target(
+      name: "AppTelemetryClient",
+      dependencies: [
+        "AnalyticsClient",
+        "TelemetryClient",
+      ]
+    ),
+
+    .target(
       name: "MetaTrackerLib",
       dependencies: [
         "APIClient",
+        "AnalyticsClient",
         "DatabaseClient",
         "Models",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),

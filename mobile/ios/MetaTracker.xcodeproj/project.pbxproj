@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7905418626549CA400A6123A /* MetaTrackerLib in Frameworks */ = {isa = PBXBuildFile; productRef = 7905418526549CA400A6123A /* MetaTrackerLib */; };
 		7905418826549CAA00A6123A /* MetaTrackerLib in Frameworks */ = {isa = PBXBuildFile; productRef = 7905418726549CAA00A6123A /* MetaTrackerLib */; };
+		7935E16A265BC6D400D1BB07 /* AppTelemetryClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7935E169265BC6D400D1BB07 /* AppTelemetryClient */; };
 		798C124726550C22001408FB /* CoreData.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798C124626550C22001408FB /* CoreData.generated.swift */; };
 		798C124826550C22001408FB /* CoreData.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798C124626550C22001408FB /* CoreData.generated.swift */; };
 		79CFA5AB2653058300FA8442 /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA5AA2653058300FA8442 /* Tests_iOS.swift */; };
@@ -66,6 +67,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7905418626549CA400A6123A /* MetaTrackerLib in Frameworks */,
+				7935E16A265BC6D400D1BB07 /* AppTelemetryClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,6 +217,7 @@
 			name = "MetaTracker (iOS)";
 			packageProductDependencies = (
 				7905418526549CA400A6123A /* MetaTrackerLib */,
+				7935E169265BC6D400D1BB07 /* AppTelemetryClient */,
 			);
 			productName = "MetaTracker (iOS)";
 			productReference = 79CFA5962653058300FA8442 /* MetaTracker.app */;
@@ -769,6 +772,10 @@
 		7905418726549CAA00A6123A /* MetaTrackerLib */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MetaTrackerLib;
+		};
+		7935E169265BC6D400D1BB07 /* AppTelemetryClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppTelemetryClient;
 		};
 /* End XCSwiftPackageProductDependency section */
 

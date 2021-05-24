@@ -13,7 +13,11 @@ extension AppEnvironment {
       return .none
     }),
     db: .init(),
-    mainQueue: DispatchQueue.main.eraseToAnyScheduler()
+    mainQueue: DispatchQueue.main.eraseToAnyScheduler(),
+    analytics: .init(
+      initialize: { XCTFail("AnalyticsClient.initialize() is unimplemented.") },
+      track: { XCTFail("AnalyticsClient.track(\($0)) is unimplemented.") }
+    )
   )
 }
 
