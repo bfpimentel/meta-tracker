@@ -8,6 +8,7 @@
 import Combine
 import ComposableArchitecture
 import Foundation
+import Models
 import OSLog
 
 let log = Logger(subsystem: "br.dev.native.metatracker.apiclient", category: "main")
@@ -16,13 +17,15 @@ extension APIClient {
 
   public static let live = APIClient(
     trackings: { codes in
-      apiRequest(.trackings(codes)).apiDecoded()
+      apiRequest(.trackings(codes))
+        .apiDecoded(as: [TrackingResponse].self)
+        .map { $0.map(Tracking.init(from:)) }
     }
   )
 }
 
 extension Effect where Output == (Data, HTTPURLResponse) {
-  func apiDecoded<T: Decodable>(to type: T.Type = T.self) -> Effect<T, Error> {
+  func apiDecoded<T: Decodable>(as type: T.Type = T.self) -> Effect<T, Error> {
     tryMap { data, _ in try data.apiDecoded() }
       .eraseToEffect()
   }

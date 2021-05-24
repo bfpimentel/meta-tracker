@@ -11,20 +11,24 @@ public struct APIClient {
   }
 }
 
-//public struct TrackingResponse: Decodable {
-//  public let code: String
-//  public let isTracked: Bool
-//  public let isDelivered: Bool?
-//  public let postedAt: Date?
-//  public let updatedAt: Date?
-//  public let events: [Event]
-//  public let errorMessage: String?
-//
-//  public struct Event: Decodable, Equatable, Hashable {
-//    public let description: String
-//    public let country: String
-//    public let state: String?
-//    public let city: String?
-//    public let trackedAt: Date
-//  }
-//}
+struct TrackingResponse: Decodable {
+  let code: String
+  let events: [Event]?
+
+  struct Event: Decodable, Equatable, Hashable {
+    let description: String
+    let trackedAt: Date
+  }
+}
+
+extension Tracking {
+  init(from response: TrackingResponse) {
+    self.init(code: response.code, events: (response.events ?? []).map(Event.init(from:)))
+  }
+}
+
+extension Tracking.Event {
+  init(from response: TrackingResponse.Event) {
+    self.init(description: response.description, trackedAt: response.trackedAt)
+  }
+}

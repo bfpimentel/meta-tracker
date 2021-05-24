@@ -1,20 +1,48 @@
-//
-//  File.swift
-//
-//
-//  Created by Guilherme Souza on 21/05/21.
-//
-
-import APIClient
 import Foundation
 import Models
 import XCTest
 
-final class TrackingResponseDecodingTests: XCTestCase {
+@testable import APIClient
+
+final class TrackingResponseTests: XCTestCase {
 
   func testDecoding() throws {
     let data = try XCTUnwrap(json.data(using: .utf8))
-    _ = try data.apiDecoded(as: [Tracking].self)
+    _ = try data.apiDecoded(as: [TrackingResponse].self)
+  }
+
+  func testMappingToDomain() {
+    let trackedAt = Date()
+    let responses = [
+      TrackingResponse(code: "LE251026577SE", events: nil),
+      TrackingResponse(
+        code: "LE251026577SE",
+        events: [
+          TrackingResponse.Event(
+            description: "Objeto postado",
+            trackedAt: trackedAt
+          )
+        ]
+      ),
+    ]
+
+    let trackings = responses.map(Tracking.init(from:))
+
+    XCTAssertEqual(
+      trackings,
+      [
+        Tracking(code: "LE251026577SE", events: []),
+        Tracking(
+          code: "LE251026577SE",
+          events: [
+            Tracking.Event(
+              description: "Objeto postado",
+              trackedAt: trackedAt
+            )
+          ]
+        ),
+      ]
+    )
   }
 }
 
