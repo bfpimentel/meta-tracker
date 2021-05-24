@@ -34,18 +34,18 @@ public struct AppEnvironment {
   public var api: APIClient
   public var db: DatabaseClient
   public var mainQueue: AnySchedulerOf<DispatchQueue>
-  public var log: Logger
+  //  public var log: Logger
 
   public init(
     api: APIClient,
     db: DatabaseClient,
-    mainQueue: AnySchedulerOf<DispatchQueue>,
-    log: Logger
+    mainQueue: AnySchedulerOf<DispatchQueue>
+    //    log: Logger
   ) {
     self.api = api
     self.db = db
     self.mainQueue = mainQueue
-    self.log = log
+    //    self.log = log
   }
 }
 

@@ -29,7 +29,7 @@ extension AppEnvironment {
   static let live = Self(
     api: .live,
     db: .live,
-    mainQueue: DispatchQueue.main.eraseToAnyScheduler(),
-    log: Logger(subsystem: Bundle.main.bundleIdentifier ?? "br.dev.native.metatracker", category: "main")
+    mainQueue: DispatchQueue.main.eraseToAnyScheduler()
+      //    log: Logger(subsystem: Bundle.main.bundleIdentifier ?? "br.dev.native.metatracker", category: "main")
   )
 }
