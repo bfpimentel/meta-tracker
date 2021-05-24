@@ -4,7 +4,7 @@ import TelemetryClient
 extension AnalyticsClient {
   public static let appTelemetry = Self(
     initialize: {
-        let config = TelemetryManagerConfiguration(appID: Secrets.appTelemetryID)
+      let config = TelemetryManagerConfiguration(appID: Secrets.appTelemetryID)
       TelemetryManager.initialize(with: config)
     },
     track: { event in
