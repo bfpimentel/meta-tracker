@@ -7,8 +7,8 @@ on:
     branches:
       - main
   pull_request:
-    paths:
-      - "mobile/ios"
+    # paths:
+    #   - "mobile/ios"
     branches:
       - main
 
