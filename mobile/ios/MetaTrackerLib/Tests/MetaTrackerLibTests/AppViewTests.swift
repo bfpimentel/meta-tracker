@@ -1,3 +1,4 @@
+import AnalyticsClient
 import ComposableArchitecture
 import Foundation
 import MetaTrackerLib
@@ -139,6 +140,29 @@ final class AppViewTests: XCTestCase {
         $0.items = []
       }
     )
+  }
+
+  func test_AppView_DidFinishLaunching_ShouldInitializeAnalyticsAndTrackAppLaunchedEvent() {
+    var env = AppEnvironment.failing
+
+    var analyticsInitialized = false
+    env.analytics.initialize = {
+      analyticsInitialized = true
+    }
+
+    var events: [Event] = []
+    env.analytics.track = { events.append($0) }
+
+    let store = TestStore(
+      initialState: .init(),
+      reducer: appReducer,
+      environment: env
+    )
+
+    store.send(.appDelegate(.didFinishLaunching))
+
+    XCTAssertTrue(analyticsInitialized)
+    XCTAssertEqual(events, [.appLaunched])
   }
 }
 
