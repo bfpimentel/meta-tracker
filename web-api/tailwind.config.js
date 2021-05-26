@@ -3,13 +3,13 @@ module.exports = {
   purge: ["./components/**/*.{js,ts,jsx,tsx}", "./pages/**/*.{js,ts,jsx,tsx}"],
   theme: {
     fontFamily: {
-      display: ["Roboto"],
-    },
+      display: ["Roboto"]
+    }
   },
   variants: {
     extend: {
-      opacity: ["disabled"],
-    },
+      opacity: ["disabled"]
+    }
   },
-  plugins: [],
+  plugins: []
 };

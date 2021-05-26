@@ -2,6 +2,7 @@ import React from "react";
 import { track, Tracking } from "@/data/repository";
 import moment from "moment";
 import CircleLoading from "react-loading";
+import Accordion from "@/components/Accordion";
 
 type TrackingViewData = {
   name: string;
@@ -71,9 +72,7 @@ class Home extends React.Component<{}, HomeState> {
   }
 
   fetchTrackings() {
-    if (!this.storedTrackings) {
-      return;
-    }
+    if (!this.storedTrackings) return;
 
     async function getTrackings(codes: string[]): Promise<Tracking[]> {
       const trackings: Tracking[] = await track(codes);
@@ -95,16 +94,16 @@ class Home extends React.Component<{}, HomeState> {
               }))
             });
         })
-        .catch((error) => this.setState({ isLoading: false }));
+        .catch(() => this.setState({ isLoading: false }));
     });
   }
 
   setCode(code: string) {
-    this.setState({ code: code }, () => this.updateState());
+    this.setState({ code: code }, this.updateState);
   }
 
   setName(name: string) {
-    this.setState({ name: name }, () => this.updateState());
+    this.setState({ name: name }, this.updateState);
   }
 
   updateState() {
@@ -133,22 +132,22 @@ class Home extends React.Component<{}, HomeState> {
   submitNewTracking() {
     const newTracking = { code: this.state.code, name: this.state.name };
 
-    this.setState({ code: "", name: "" });
-
     if (this.storedTrackings) this.storedTrackings.push(newTracking);
     else this.storedTrackings = [newTracking];
 
     localStorage.setItem("trackings", JSON.stringify(this.storedTrackings));
 
-    this.fetchTrackings();
+    this.setState({ code: "", name: "" }, this.fetchTrackings);
   }
+
+  deleteTracking(code: string) {}
 
   render() {
     return (
       <>
         {/* <Description /> */}
         <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
-        <p className="text-xl mt-4">Insira abaixo um código a ser rastreado, acompanhado de um nome:</p>
+        <p className="text-xl mt-4">Insira abaixo um código dos Correios a ser rastreado, acompanhado de um nome:</p>
         <div className="grid md:grid-cols-2 sm:grid-cols-1 items-stretch md:space-x-4 sm:space-x-0">
           <input
             onChange={(event) => this.setCode(event.currentTarget.value)}
@@ -184,7 +183,7 @@ class Home extends React.Component<{}, HomeState> {
           </button>
         </div>
         <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
-        <MainBody isLoading={this.state.isLoading} trackings={this.state.trackings} />
+        <MainBody isLoading={this.state.isLoading} trackings={this.state.trackings} onDelete={this.deleteTracking} />
       </>
     );
   }
@@ -206,41 +205,64 @@ const Description: React.FunctionComponent<{}> = () => {
   );
 };
 
-const MainBody: React.FunctionComponent<{ isLoading: boolean; trackings: TrackingViewData[] }> = ({
-  isLoading,
-  trackings
-}) => {
+const MainBody: React.FunctionComponent<{
+  isLoading: boolean;
+  trackings: TrackingViewData[];
+  onDelete: (code: string) => void;
+}> = ({ isLoading, trackings, onDelete }) => {
   return (
-    <div className="self-center">
+    <div>
       {(() => {
-        if (isLoading) return <CircleLoading />;
-        else return <Trackings trackings={trackings} />;
+        if (isLoading)
+          return (
+            <div className="flex w-full justify-center">
+              <CircleLoading className="place-self-center" />
+            </div>
+          );
+        else return <Trackings trackings={trackings} onDelete={onDelete} />;
       })()}
     </div>
   );
 };
 
-const Trackings: React.FunctionComponent<{ trackings: TrackingViewData[] }> = ({ trackings }) => {
+const Trackings: React.FunctionComponent<{ trackings: TrackingViewData[]; onDelete: (code: string) => void }> = ({
+  trackings,
+  onDelete
+}) => {
   if (!trackings) {
     return <></>;
   }
 
+  const TrackingTitle: React.FunctionComponent<{ tracking: TrackingViewData }> = ({ tracking }) => (
+    <div className="flex flex-col sm:flex-row mt-4">
+      <p className="text-xl font-bold mr-2 text-gray-600 dark:text-gray-400">{tracking.code}</p>
+      <p className="text-xl font-bold">{tracking.name}</p>
+    </div>
+  );
+
+  const TrackingBody: React.FunctionComponent<{ tracking: TrackingViewData; index: number }> = ({
+    tracking,
+    index
+  }) => (
+    <div className="flex flex-col w-full">
+      <Events tracking={tracking} />
+      {(() => {
+        if (index == trackings.length - 1) return <></>;
+        return (
+          <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
+        );
+      })()}
+    </div>
+  );
+
   return (
     <>
       {trackings.map((tracking, index) => (
-        <div key={tracking.code}>
-          <div className="flex flex-col sm:flex-row mt-4">
-            <p className="text-xl font-bold mr-2 text-gray-600 dark:text-gray-400">{tracking.code}</p>
-            <p className="text-xl font-bold">{tracking.name}</p>
-          </div>
-          <Events tracking={tracking} />
-          {(() => {
-            if (index == trackings.length - 1) return <></>;
-            return (
-              <div className="mt-4 border-t border-black border-opacity-10 dark:border-white dark:border-opacity-10"></div>
-            );
-          })()}
-        </div>
+        <Accordion
+          key={tracking.code}
+          header={<TrackingTitle tracking={tracking} />}
+          body={<TrackingBody tracking={tracking} index={index} />}
+        />
       ))}
     </>
   );
@@ -282,10 +304,7 @@ const Events: React.FunctionComponent<{ tracking: TrackingViewData }> = ({ track
 };
 
 const ValidationError: React.FunctionComponent<{ errorMessage: string }> = ({ errorMessage }) => {
-  if (errorMessage) {
-    return <p className="flex-grow text-red-500">{errorMessage}</p>;
-  }
-
+  if (errorMessage) return <p className="flex-grow text-red-500">{errorMessage}</p>;
   return <div className="flex-grow"></div>;
 };
 
