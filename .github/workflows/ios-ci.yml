@@ -1,0 +1,22 @@
+name: iOS CI
+
+on:
+  push:
+    paths:
+      - "mobile/ios/**"
+    branches:
+      - main
+  pull_request:
+    paths:
+      - "mobile/ios/**"
+    branches:
+      - main
+
+jobs:
+  build_and_test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests
+        run: fastlane test
+        working-directory: "mobile/ios"

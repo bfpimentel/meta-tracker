@@ -8,18 +8,24 @@
 import Combine
 import ComposableArchitecture
 import Foundation
+import Models
+import OSLog
+
+let log = Logger(subsystem: "br.dev.native.metatracker.apiclient", category: "main")
 
 extension APIClient {
 
   public static let live = APIClient(
     trackings: { codes in
-      apiRequest(.trackings(codes)).apiDecoded()
+      apiRequest(.trackings(codes))
+        .apiDecoded(as: [TrackingResponse].self)
+        .map { $0.map(Tracking.init(from:)) }
     }
   )
 }
 
 extension Effect where Output == (Data, HTTPURLResponse) {
-  func apiDecoded<T: Decodable>(to type: T.Type = T.self) -> Effect<T, Error> {
+  func apiDecoded<T: Decodable>(as type: T.Type = T.self) -> Effect<T, Error> {
     tryMap { data, _ in try data.apiDecoded() }
       .eraseToEffect()
   }
@@ -45,7 +51,12 @@ private let decoder = { () -> JSONDecoder in
 
 extension Data {
 
-  public func apiDecoded<T: Decodable>(as type: T.Type = T.self) throws -> T {
-    try decoder.decode(type, from: self)
+  func apiDecoded<T: Decodable>(as type: T.Type = T.self) throws -> T {
+    do {
+      return try decoder.decode(type, from: self)
+    } catch {
+      log.error("error decoding '\(T.self)': \(error as NSError)")
+      throw error
+    }
   }
 }

@@ -1,4 +1,5 @@
 import APIClient
+import AnalyticsClient
 import ComposableArchitecture
 import DatabaseClient
 import Models
@@ -23,6 +24,7 @@ public struct AppState: Equatable {
 }
 
 public enum AppAction: Equatable {
+  case appDelegate(AppDelegateAction)
   case searchTextChanged(String)
   case searchCommited
   case searchCanceled
@@ -30,34 +32,47 @@ public enum AppAction: Equatable {
   case searchResults(Result<[Tracking.Event], NSError>)
 }
 
+public enum AppDelegateAction: Equatable {
+  case didFinishLaunching
+}
+
 public struct AppEnvironment {
   public var api: APIClient
   public var db: DatabaseClient
   public var mainQueue: AnySchedulerOf<DispatchQueue>
-  public var log: Logger
+  public var analytics: AnalyticsClient
+  //  public var log: Logger
 
   public init(
     api: APIClient,
     db: DatabaseClient,
     mainQueue: AnySchedulerOf<DispatchQueue>,
-    log: Logger
+    analytics: AnalyticsClient
+      //    log: Logger
   ) {
     self.api = api
     self.db = db
     self.mainQueue = mainQueue
-    self.log = log
+    self.analytics = analytics
+    //    self.log = log
   }
 }
 
 public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, env in
+  struct CancellationId: Hashable {}
+
   switch action {
+  case .appDelegate(.didFinishLaunching):
+    return .concatenate(
+      .fireAndForget { env.analytics.initialize() },
+      .fireAndForget { env.analytics.track(.appLaunched) }
+    )
+
   case .searchTextChanged(let text):
     state.searchText = text
     return .none
 
   case .searchCommited:
-    struct CancellationId: Hashable {}
-
     state.isSearchInFlight = true
     return env.api
       .trackings(state.searchText.components(separatedBy: ","))
@@ -71,10 +86,14 @@ public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, ac
         }
       }
       .catchToEffect()
-      .map { AppAction.searchResults($0) }
+      .map(AppAction.searchResults)
 
   case .searchCanceled:
-    return .init(value: .searchTextChanged(""))
+    state.isSearchInFlight = false
+    return .concatenate(
+      .init(value: .searchTextChanged("")),
+      .cancel(id: CancellationId())
+    )
 
   case let .searchResults(.success(items)):
     state.items = items

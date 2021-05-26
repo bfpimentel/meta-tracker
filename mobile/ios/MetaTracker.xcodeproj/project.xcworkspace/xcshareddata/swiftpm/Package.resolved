@@ -38,6 +38,15 @@
         }
       },
       {
+        "package": "TelemetryClient",
+        "repositoryURL": "https://github.com/AppTelemetry/SwiftClient",
+        "state": {
+          "branch": null,
+          "revision": "0d980cf3e320fb760d041b8682c833dc7e9bdba2",
+          "version": "1.0.13"
+        }
+      },
+      {
         "package": "xctest-dynamic-overlay",
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
