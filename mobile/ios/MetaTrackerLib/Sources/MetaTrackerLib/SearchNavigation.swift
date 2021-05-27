@@ -36,7 +36,7 @@ struct SearchNavigation<Content: View>: UIViewControllerRepresentable {
       cancelAction: @escaping () -> Void
     ) {
       rootViewController = UIHostingController(rootView: content)
-      searchController.searchBar.autocapitalizationType = .none
+      searchController.searchBar.autocapitalizationType = .allCharacters
       searchController.obscuresBackgroundDuringPresentation = false
       rootViewController.navigationItem.searchController = searchController
       _text = searchText

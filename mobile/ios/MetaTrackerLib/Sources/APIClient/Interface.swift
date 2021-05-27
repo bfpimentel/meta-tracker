@@ -4,9 +4,11 @@ import Models
 
 public struct APIClient {
 
-  public var trackings: (_ codes: [String]) -> Effect<[Tracking], Error>
+  public var trackings: (_ codes: [String]) -> Effect<[Result<Tracking, TrackingError>], Error>
 
-  public init(trackings: @escaping (_ codes: [String]) -> Effect<[Tracking], Error>) {
+  public init(
+    trackings: @escaping (_ codes: [String]) -> Effect<[Result<Tracking, TrackingError>], Error>
+  ) {
     self.trackings = trackings
   }
 }
@@ -14,6 +16,7 @@ public struct APIClient {
 struct TrackingResponse: Decodable {
   let code: String
   let events: [Event]?
+  let errorMessage: String?
 
   struct Event: Decodable, Equatable, Hashable {
     let description: String
@@ -21,9 +24,19 @@ struct TrackingResponse: Decodable {
   }
 }
 
+public struct TrackingError: Error, Equatable {
+  public let code: String
+  public let message: String
+}
+
 extension Tracking {
-  init(from response: TrackingResponse) {
-    self.init(code: response.code, events: (response.events ?? []).map(Event.init(from:)))
+  static func from(response: TrackingResponse) -> Result<Tracking, TrackingError> {
+    if let error = response.errorMessage {
+      return .failure(TrackingError(code: response.code, message: error))
+    }
+
+    return .success(
+      Tracking(code: response.code, events: (response.events ?? []).map(Event.init(from:))))
   }
 }
 

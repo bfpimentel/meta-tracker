@@ -39,19 +39,19 @@ final class AppViewTests: XCTestCase {
     )
   }
 
-  func test_AppView_SuccessSearchResults_ShouldSetItemsAndSetFalseToSearchInFlight() {
+  func test_AppView_SuccessSearchResults_ShouldSetItemsAndSetFalseToSearchInFlight() throws {
     let store = TestStore(
       initialState: .init(isSearchInFlight: true),
       reducer: appReducer,
       environment: .failing
     )
 
-    let event = Tracking.Event.stub()
+    let tracking = Tracking.from(response: .stub())
 
     store.assert(
-      .send(.searchResults(.success([event]))) {
+      .send(.searchResults(.success([tracking]))) {
         $0.isSearchInFlight = false
-        $0.items = [event]
+        $0.result = [tracking]
       }
     )
   }
@@ -73,6 +73,7 @@ final class AppViewTests: XCTestCase {
 
   func test_AppView_SearchCommited_ShouldPerformRequest() {
     let response = TrackingResponse.stub()
+    let tracking = Tracking.from(response: response)
     let events = (response.events ?? [])
       .map(Tracking.Event.init(from:))
       .sorted { $0.trackedAt > $1.trackedAt }
@@ -80,7 +81,7 @@ final class AppViewTests: XCTestCase {
     let scheduler = DispatchQueue.test
     var env = AppEnvironment.failing
 
-    env.api.trackings = { _ in .init(value: [Tracking(from: response)]) }
+    env.api.trackings = { _ in .init(value: [tracking]) }
     env.mainQueue = scheduler.eraseToAnyScheduler()
 
     let store = TestStore(
@@ -94,9 +95,9 @@ final class AppViewTests: XCTestCase {
         $0.isSearchInFlight = true
       },
       .do { scheduler.advance() },
-      .receive(.searchResults(.success(events))) {
+      .receive(.searchResults(.success([tracking]))) {
         $0.isSearchInFlight = false
-        $0.items = events
+        $0.result = [tracking]
       }
     )
   }
@@ -122,7 +123,7 @@ final class AppViewTests: XCTestCase {
       .do { scheduler.advance() },
       .receive(.searchResults(.failure(DummyError() as NSError))) {
         $0.isSearchInFlight = false
-        $0.items = []
+        $0.result = []
       }
     )
   }
@@ -164,7 +165,8 @@ extension TrackingResponse {
           description: "Objeto recebido na unidade de exportação no país de origem",
           trackedAt: Date(timeIntervalSince1970: 3600)
         ),
-      ]
+      ],
+      errorMessage: nil
     )
   }
 }

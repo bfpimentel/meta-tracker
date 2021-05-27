@@ -9,16 +9,16 @@ import SwiftUI
 public struct AppState: Equatable {
 
   public var searchText: String
-  public var items: [Tracking.Event]
+  public var result: [Result<Tracking, TrackingError>]
   public var isSearchInFlight: Bool
 
   public init(
     searchText: String = "",
-    items: [Tracking.Event] = [],
+    result: [Result<Tracking, TrackingError>] = [],
     isSearchInFlight: Bool = false
   ) {
     self.searchText = searchText
-    self.items = items
+    self.result = result
     self.isSearchInFlight = isSearchInFlight
   }
 }
@@ -28,8 +28,7 @@ public enum AppAction: Equatable {
   case searchTextChanged(String)
   case searchCommited
   case searchCanceled
-
-  case searchResults(Result<[Tracking.Event], NSError>)
+  case searchResults(Result<[Result<Tracking, TrackingError>], NSError>)
 }
 
 public enum AppDelegateAction: Equatable {
@@ -57,12 +56,6 @@ public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, ac
       .cancellable(id: CancellationId(), cancelInFlight: true)
       .receive(on: env.mainQueue)
       .mapError { $0 as NSError }
-      .map {
-        $0.flatMap {
-          $0.events
-            .sorted { $0.trackedAt > $1.trackedAt }
-        }
-      }
       .catchToEffect()
       .map(AppAction.searchResults)
 
@@ -73,14 +66,36 @@ public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, ac
       .cancel(id: CancellationId())
     )
 
-  case let .searchResults(.success(items)):
-    state.items = items
+  case let .searchResults(.success(result)):
+    state.result = result
     state.isSearchInFlight = false
     return .none
 
   case let .searchResults(.failure(error)):
     state.isSearchInFlight = false
     return .none
+  }
+}
+
+extension Result: Identifiable where Success == Tracking, Failure == TrackingError {
+  public var id: String {
+    switch self {
+    case .success(let tracking):
+      return "Tracking(\(tracking.id))"
+    case .failure(let error):
+      return "Error(\(error.code))"
+    }
+  }
+}
+
+extension Result where Success == Tracking, Failure == TrackingError {
+  var code: String {
+    switch self {
+    case .success(let tracking):
+      return tracking.code
+    case .failure(let error):
+      return error.code
+    }
   }
 }
 
@@ -107,7 +122,7 @@ public struct AppView: View {
             ProgressView()
           } else {
             List {
-              ForEach(viewStore.items, content: rowView)
+              ForEach(viewStore.result, content: section)
             }
           }
         }
@@ -117,14 +132,23 @@ public struct AppView: View {
     }
   }
 
-  private func rowView(_ model: Tracking.Event) -> some View {
-    VStack(alignment: .leading, spacing: 4) {
-      Text(model.description)
-      Text(dateFormatter.string(from: model.trackedAt))
-        .font(.caption)
-        .foregroundColor(.secondary)
+  private func section(_ model: Result<Tracking, TrackingError>) -> some View {
+    Section(header: Text(model.code)) {
+      switch model {
+      case .success(let tracking):
+        ForEach(tracking.events) { event in
+          VStack(alignment: .leading, spacing: 4) {
+            Text(event.description)
+            Text(dateFormatter.string(from: event.trackedAt))
+              .font(.caption)
+              .foregroundColor(.secondary)
+          }
+          .padding(.vertical, 8)
+        }
+      case .failure(let error):
+        Text(error.message)
+      }
     }
-    .padding(.vertical, 8)
   }
 }
 

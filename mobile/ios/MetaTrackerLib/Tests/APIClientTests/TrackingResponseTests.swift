@@ -14,7 +14,7 @@ final class TrackingResponseTests: XCTestCase {
   func testMappingToDomain() {
     let trackedAt = Date()
     let responses = [
-      TrackingResponse(code: "LE251026577SE", events: nil),
+      TrackingResponse(code: "LE251026577SE", events: nil, errorMessage: "Código inválido"),
       TrackingResponse(
         code: "LE251026577SE",
         events: [
@@ -22,25 +22,27 @@ final class TrackingResponseTests: XCTestCase {
             description: "Objeto postado",
             trackedAt: trackedAt
           )
-        ]
+        ],
+        errorMessage: nil
       ),
     ]
 
-    let trackings = responses.map(Tracking.init(from:))
+    let trackings = responses.map(Tracking.from(response:))
 
     XCTAssertEqual(
       trackings,
       [
-        Tracking(code: "LE251026577SE", events: []),
-        Tracking(
-          code: "LE251026577SE",
-          events: [
-            Tracking.Event(
-              description: "Objeto postado",
-              trackedAt: trackedAt
-            )
-          ]
-        ),
+        .failure(TrackingError(code: "LE251026577SE", message: "Código inválido")),
+        .success(
+          Tracking(
+            code: "LE251026577SE",
+            events: [
+              Tracking.Event(
+                description: "Objeto postado",
+                trackedAt: trackedAt
+              )
+            ]
+          )),
       ]
     )
   }
