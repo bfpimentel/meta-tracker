@@ -36,28 +36,6 @@ public enum AppDelegateAction: Equatable {
   case didFinishLaunching
 }
 
-public struct AppEnvironment {
-  public var api: APIClient
-  public var db: DatabaseClient
-  public var mainQueue: AnySchedulerOf<DispatchQueue>
-  public var analytics: AnalyticsClient
-  //  public var log: Logger
-
-  public init(
-    api: APIClient,
-    db: DatabaseClient,
-    mainQueue: AnySchedulerOf<DispatchQueue>,
-    analytics: AnalyticsClient
-      //    log: Logger
-  ) {
-    self.api = api
-    self.db = db
-    self.mainQueue = mainQueue
-    self.analytics = analytics
-    //    self.log = log
-  }
-}
-
 public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, env in
   struct CancellationId: Hashable {}
 

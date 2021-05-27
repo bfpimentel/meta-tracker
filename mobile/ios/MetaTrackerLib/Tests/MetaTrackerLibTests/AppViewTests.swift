@@ -7,21 +7,6 @@ import XCTest
 
 @testable import APIClient
 
-extension AppEnvironment {
-  static let failing = Self(
-    api: .init(trackings: { codes in
-      XCTFail("APIClient.trackings(\(codes)) is unimplemented.")
-      return .none
-    }),
-    db: .init(),
-    mainQueue: DispatchQueue.main.eraseToAnyScheduler(),
-    analytics: .init(
-      initialize: { XCTFail("AnalyticsClient.initialize() is unimplemented.") },
-      track: { XCTFail("AnalyticsClient.track(\($0)) is unimplemented.") }
-    )
-  )
-}
-
 final class AppViewTests: XCTestCase {
   func test_appView_searchTextChanged_changesSeachText() {
     let store = TestStore(

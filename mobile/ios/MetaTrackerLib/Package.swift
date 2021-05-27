@@ -23,9 +23,14 @@ let package = Package(
       from: "1.9.0"),
     .package(
       name: "TelemetryClient", url: "https://github.com/AppTelemetry/SwiftClient", from: "1.0.13"),
+    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "0.1.0"),
   ],
   targets: [
-    .target(name: "AnalyticsClient"),
+    .target(
+      name: "AnalyticsClient",
+      dependencies: [
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay")
+      ]),
     .target(
       name: "DatabaseClient",
       dependencies: [
@@ -36,6 +41,7 @@ let package = Package(
       name: "APIClient",
       dependencies: [
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
         "Models",
       ]
     ),
@@ -66,6 +72,7 @@ let package = Package(
         "DatabaseClient",
         "Models",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
     .testTarget(

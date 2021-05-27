@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Guilherme Souza on 24/05/21.
-//
-
 import Foundation
 
 public struct AnalyticsClient {
@@ -19,3 +12,16 @@ public struct AnalyticsClient {
     self.track = track
   }
 }
+
+#if DEBUG
+  import XCTestDynamicOverlay
+
+  extension AnalyticsClient {
+
+    public static var failing = AnalyticsClient(
+      initialize: { XCTFail("AnalyticsClient.initialize is unimplemented") },
+      track: { XCTFail("AnalyticsClient.track(\($0)) is unimplemented.") }
+    )
+  }
+
+#endif
