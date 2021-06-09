@@ -5,6 +5,7 @@ import DatabaseClient
 import Models
 import OSLog
 import SwiftUI
+import AppEnvironment
 import SearchFeature
 
 public struct AppState: Equatable {

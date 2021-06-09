@@ -55,6 +55,18 @@ let package = Package(
         "__Snapshots__"
       ]
     ),
+    
+    .target(
+        name: "AppEnvironment",
+        dependencies: [
+            "APIClient",
+            "AnalyticsClient",
+            "DatabaseClient",
+            "SearchFeature",
+            .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        ]
+    ),
 
     .target(
       name: "AppTelemetryClient",
@@ -68,13 +80,13 @@ let package = Package(
     .target(
       name: "MetaTrackerLib",
       dependencies: [
+        "AppEnvironment",
         "APIClient",
         "AnalyticsClient",
         "DatabaseClient",
         "Models",
         "SearchFeature",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
     .testTarget(
@@ -92,7 +104,7 @@ let package = Package(
             "AnalyticsClient",
         ]
     ),
-    .testTarget(name: "SearchFeatureTests", dependencies: ["SearchFeature"]),
+    .testTarget(name: "SearchFeatureTests", dependencies: ["SearchFeature", "AppEnvironment"]),
     
     // Secrets
     .target(name: "Secrets", exclude: ["_Secrets.swift"]),

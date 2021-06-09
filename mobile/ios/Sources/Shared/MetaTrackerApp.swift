@@ -7,6 +7,7 @@
 
 import AppTelemetryClient
 import ComposableArchitecture
+import AppEnvironment
 import MetaTrackerLib
 import OSLog
 import SwiftUI

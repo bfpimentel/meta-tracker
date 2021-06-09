@@ -4,10 +4,9 @@ import Foundation
 import Models
 import XCTest
 import SearchFeature
+import AppEnvironment
 
-@testable import MetaTrackerLib
 @testable import APIClient
-
 
 final class SearchViewTests: XCTestCase {
   func test_searchTextChanged_changesSeachText() {
@@ -135,6 +134,7 @@ extension TrackingResponse {
   static func stub() -> TrackingResponse {
     TrackingResponse(
       code: "LE251026577SE",
+        isDelivered: false,
       events: [
         TrackingResponse.Event(
           description: "Objeto postado",

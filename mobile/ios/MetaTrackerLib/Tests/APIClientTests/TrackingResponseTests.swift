@@ -14,9 +14,10 @@ final class TrackingResponseTests: XCTestCase {
   func testMappingToDomain() {
     let trackedAt = Date()
     let responses = [
-      TrackingResponse(code: "LE251026577SE", events: nil, errorMessage: "Código inválido"),
+        TrackingResponse(code: "LE251026577SE", isDelivered: false, events: nil, errorMessage: "Código inválido"),
       TrackingResponse(
         code: "LE251026577SE",
+        isDelivered: false,
         events: [
           TrackingResponse.Event(
             description: "Objeto postado",
@@ -36,6 +37,7 @@ final class TrackingResponseTests: XCTestCase {
         .success(
           Tracking(
             code: "LE251026577SE",
+            isDelivered: false,
             events: [
               Tracking.Event(
                 description: "Objeto postado",

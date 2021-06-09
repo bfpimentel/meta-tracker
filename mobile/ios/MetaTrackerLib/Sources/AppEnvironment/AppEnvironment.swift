@@ -28,7 +28,7 @@ public struct AppEnvironment {
 }
 
 extension AppEnvironment {
-  var searchEnvironment: SearchEnvironment {
+  public var searchEnvironment: SearchEnvironment {
     SearchEnvironment(api: api, mainQueue: mainQueue)
   }
 }
