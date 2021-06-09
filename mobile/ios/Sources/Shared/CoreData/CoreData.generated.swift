@@ -16,11 +16,17 @@ internal class CDTracking: NSManagedObject {
     return "CDTracking"
   }
 
-  internal class func entity(in managedObjectContext: NSManagedObjectContext) -> NSEntityDescription? {
+  internal class func entity(in managedObjectContext: NSManagedObjectContext)
+    -> NSEntityDescription?
+  {
     return NSEntityDescription.entity(forEntityName: entityName, in: managedObjectContext)
   }
 
-  @available(*, deprecated, renamed: "makeFetchRequest", message: "To avoid collisions with the less concrete method in `NSManagedObject`, please use `makeFetchRequest()` instead.")
+  @available(
+    *, deprecated, renamed: "makeFetchRequest",
+    message:
+      "To avoid collisions with the less concrete method in `NSManagedObject`, please use `makeFetchRequest()` instead."
+  )
   @nonobjc internal class func fetchRequest() -> NSFetchRequest<CDTracking> {
     return NSFetchRequest<CDTracking>(entityName: entityName)
   }

@@ -1,12 +1,12 @@
 import APIClient
 import AnalyticsClient
+import AppEnvironment
 import ComposableArchitecture
 import DatabaseClient
 import Models
 import OSLog
-import SwiftUI
-import AppEnvironment
 import SearchFeature
+import SwiftUI
 
 public struct AppState: Equatable {
 

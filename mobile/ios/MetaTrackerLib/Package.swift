@@ -55,17 +55,17 @@ let package = Package(
         "__Snapshots__"
       ]
     ),
-    
+
     .target(
-        name: "AppEnvironment",
-        dependencies: [
-            "APIClient",
-            "AnalyticsClient",
-            "DatabaseClient",
-            "SearchFeature",
-            .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
-        ]
+      name: "AppEnvironment",
+      dependencies: [
+        "APIClient",
+        "AnalyticsClient",
+        "DatabaseClient",
+        "SearchFeature",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+      ]
     ),
 
     .target(
@@ -98,14 +98,14 @@ let package = Package(
 
     // SearchFeature
     .target(
-        name: "SearchFeature",
-        dependencies: [
-            "APIClient",
-            "AnalyticsClient",
-        ]
+      name: "SearchFeature",
+      dependencies: [
+        "APIClient",
+        "AnalyticsClient",
+      ]
     ),
     .testTarget(name: "SearchFeatureTests", dependencies: ["SearchFeature", "AppEnvironment"]),
-    
+
     // Secrets
     .target(name: "Secrets", exclude: ["_Secrets.swift"]),
   ]

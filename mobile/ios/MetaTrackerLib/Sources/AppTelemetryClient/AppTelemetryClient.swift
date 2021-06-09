@@ -1,6 +1,6 @@
 import AnalyticsClient
-import TelemetryClient
 import Secrets
+import TelemetryClient
 
 extension AnalyticsClient {
   public static let appTelemetry = Self(

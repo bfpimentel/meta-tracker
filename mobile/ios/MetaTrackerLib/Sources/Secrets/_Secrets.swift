@@ -1,3 +1,3 @@
 public enum Secrets {
-    public static var appTelemetryID = "PUT YOUR ID HERE"
+  public static var appTelemetryID = "PUT YOUR ID HERE"
 }

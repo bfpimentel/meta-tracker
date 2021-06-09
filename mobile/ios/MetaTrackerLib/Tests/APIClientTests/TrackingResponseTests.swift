@@ -14,7 +14,8 @@ final class TrackingResponseTests: XCTestCase {
   func testMappingToDomain() {
     let trackedAt = Date()
     let responses = [
-        TrackingResponse(code: "LE251026577SE", isDelivered: false, events: nil, errorMessage: "Código inválido"),
+      TrackingResponse(
+        code: "LE251026577SE", isDelivered: false, events: nil, errorMessage: "Código inválido"),
       TrackingResponse(
         code: "LE251026577SE",
         isDelivered: false,

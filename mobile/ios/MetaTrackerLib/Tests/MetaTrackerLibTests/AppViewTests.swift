@@ -1,10 +1,10 @@
 import AnalyticsClient
+import AppEnvironment
 import ComposableArchitecture
 import Foundation
 import MetaTrackerLib
 import Models
 import XCTest
-import AppEnvironment
 
 @testable import APIClient
 

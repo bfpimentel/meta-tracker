@@ -5,9 +5,9 @@
 //  Created by Guilherme Souza on 17/05/21.
 //
 
+import AppEnvironment
 import AppTelemetryClient
 import ComposableArchitecture
-import AppEnvironment
 import MetaTrackerLib
 import OSLog
 import SwiftUI

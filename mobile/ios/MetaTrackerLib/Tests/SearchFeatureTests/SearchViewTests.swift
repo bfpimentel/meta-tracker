@@ -1,10 +1,10 @@
 import AnalyticsClient
+import AppEnvironment
 import ComposableArchitecture
 import Foundation
 import Models
-import XCTest
 import SearchFeature
-import AppEnvironment
+import XCTest
 
 @testable import APIClient
 
@@ -134,7 +134,7 @@ extension TrackingResponse {
   static func stub() -> TrackingResponse {
     TrackingResponse(
       code: "LE251026577SE",
-        isDelivered: false,
+      isDelivered: false,
       events: [
         TrackingResponse.Event(
           description: "Objeto postado",

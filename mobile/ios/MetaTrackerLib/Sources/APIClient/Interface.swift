@@ -15,7 +15,7 @@ public struct APIClient {
 
 struct TrackingResponse: Decodable {
   let code: String
-    let isDelivered: Bool
+  let isDelivered: Bool
   let events: [Event]?
   let errorMessage: String?
 
@@ -37,7 +37,9 @@ extension Tracking {
     }
 
     return .success(
-        Tracking(code: response.code, isDelivered: response.isDelivered, events: (response.events ?? []).map(Event.init(from:))))
+      Tracking(
+        code: response.code, isDelivered: response.isDelivered,
+        events: (response.events ?? []).map(Event.init(from:))))
   }
 }
 

@@ -54,13 +54,14 @@ public struct SearchEnvironment {
   public var api: APIClient
   public var mainQueue: AnySchedulerOf<DispatchQueue>
 
-    public init(api: APIClient, mainQueue: AnySchedulerOf<DispatchQueue>) {
-        self.api = api
-        self.mainQueue = mainQueue
-    }
+  public init(api: APIClient, mainQueue: AnySchedulerOf<DispatchQueue>) {
+    self.api = api
+    self.mainQueue = mainQueue
+  }
 }
 
-public let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment> { state, action, env in
+public let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment> {
+  state, action, env in
   struct CancellationId: Hashable {}
 
   switch action {
@@ -73,8 +74,8 @@ public let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment>
     return env.api
       .trackings(
         state.searchText
-            .components(separatedBy: ",")
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+          .components(separatedBy: ",")
+          .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
       )
       .cancellable(id: CancellationId(), cancelInFlight: true)
       .receive(on: env.mainQueue)
@@ -102,13 +103,13 @@ public let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment>
 
 public struct SearchView: View {
 
-    public let store: Store<SearchState, SearchAction>
+  public let store: Store<SearchState, SearchAction>
 
-    public init(store: Store<SearchState, SearchAction>) {
-        self.store = store
-    }
+  public init(store: Store<SearchState, SearchAction>) {
+    self.store = store
+  }
 
-    public var body: some View {
+  public var body: some View {
     WithViewStore(store) { viewStore in
       SearchNavigation(
         text: viewStore.binding(get: \.searchText, send: SearchAction.searchTextChanged)
