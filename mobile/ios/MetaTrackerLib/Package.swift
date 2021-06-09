@@ -61,6 +61,7 @@ let package = Package(
       dependencies: [
         "AnalyticsClient",
         "TelemetryClient",
+        "Secrets",
       ]
     ),
 
@@ -92,5 +93,8 @@ let package = Package(
         ]
     ),
     .testTarget(name: "SearchFeatureTests", dependencies: ["SearchFeature"]),
+    
+    // Secrets
+    .target(name: "Secrets", exclude: ["_Secrets.swift"]),
   ]
 )
