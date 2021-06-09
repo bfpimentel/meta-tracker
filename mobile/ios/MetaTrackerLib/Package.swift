@@ -15,6 +15,7 @@ let package = Package(
       name: "MetaTrackerLib",
       targets: ["MetaTrackerLib"]),
     .library(name: "AppTelemetryClient", targets: ["AppTelemetryClient"]),
+    .library(name: "HistoryFeature", targets: ["HistoryFeature"])
   ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.18.0"),
@@ -86,6 +87,7 @@ let package = Package(
         "DatabaseClient",
         "Models",
         "SearchFeature",
+        "HistoryFeature",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
       ]
     ),
@@ -109,5 +111,16 @@ let package = Package(
 
     // Secrets
     .target(name: "Secrets", exclude: ["_Secrets.swift"]),
+    
+    // HistoryFeature
+    .target(
+      name: "HistoryFeature",
+      dependencies: [
+        "APIClient",
+        "DatabaseClient",
+        "AnalyticsClient",
+      ]
+    ),
+    .testTarget(name: "HistoryFeatureTests", dependencies: ["HistoryFeature", "AppEnvironment"]),
   ]
 )

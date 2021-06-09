@@ -4,6 +4,7 @@ import ComposableArchitecture
 import DatabaseClient
 import Foundation
 import SearchFeature
+import HistoryFeature
 
 public struct AppEnvironment {
   public var api: APIClient
@@ -31,6 +32,10 @@ extension AppEnvironment {
   public var searchEnvironment: SearchEnvironment {
     SearchEnvironment(api: api, db: db, mainQueue: mainQueue)
   }
+    
+    public var trackingHistoryEnvironment: TrackingHistoryEnvironment {
+        TrackingHistoryEnvironment(db: db)
+    }
 }
 
 #if DEBUG
