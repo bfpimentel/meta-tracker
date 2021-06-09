@@ -7,7 +7,7 @@ core-data-gen:
 	@swiftgen run coredata \
 		Sources/Shared/CoreData/MetaTracker.xcdatamodeld \
 		--templateName swift5 \
-		--output Sources/Shared/CoreData/CoreData.generated.swif
+		--output Sources/Shared/CoreData/CoreData.generated.swift
 
 
 .PHONY: format

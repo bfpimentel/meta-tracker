@@ -4,10 +4,12 @@ public struct Tracking: Codable, Hashable, Identifiable {
   public var id: String { code }
 
   public let code: String
+    public let isDelivered: Bool
   public let events: [Event]
 
-  public init(code: String, events: [Event]) {
+  public init(code: String, isDelivered: Bool, events: [Event]) {
     self.code = code
+    self.isDelivered = isDelivered
     self.events = events
   }
 

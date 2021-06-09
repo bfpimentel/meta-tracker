@@ -9,34 +9,45 @@ import Foundation
 // swiftlint:disable attributes file_length vertical_whitespace_closing_braces
 // swiftlint:disable identifier_name line_length type_body_length
 
-// MARK: - Item
+// MARK: - CDTracking
 
-internal class Item: NSManagedObject {
+internal class CDTracking: NSManagedObject {
   internal class var entityName: String {
-    return "Item"
+    return "CDTracking"
   }
 
-  internal class func entity(in managedObjectContext: NSManagedObjectContext)
-    -> NSEntityDescription?
-  {
+  internal class func entity(in managedObjectContext: NSManagedObjectContext) -> NSEntityDescription? {
     return NSEntityDescription.entity(forEntityName: entityName, in: managedObjectContext)
   }
 
-  @available(
-    *, deprecated, renamed: "makeFetchRequest",
-    message:
-      "To avoid collisions with the less concrete method in `NSManagedObject`, please use `makeFetchRequest()` instead."
-  )
-  @nonobjc internal class func fetchRequest() -> NSFetchRequest<Item> {
-    return NSFetchRequest<Item>(entityName: entityName)
+  @available(*, deprecated, renamed: "makeFetchRequest", message: "To avoid collisions with the less concrete method in `NSManagedObject`, please use `makeFetchRequest()` instead.")
+  @nonobjc internal class func fetchRequest() -> NSFetchRequest<CDTracking> {
+    return NSFetchRequest<CDTracking>(entityName: entityName)
   }
 
-  @nonobjc internal class func makeFetchRequest() -> NSFetchRequest<Item> {
-    return NSFetchRequest<Item>(entityName: entityName)
+  @nonobjc internal class func makeFetchRequest() -> NSFetchRequest<CDTracking> {
+    return NSFetchRequest<CDTracking>(entityName: entityName)
   }
 
   // swiftlint:disable discouraged_optional_boolean discouraged_optional_collection
-  @NSManaged internal var timestamp: Date?
+  @NSManaged internal var code: String?
+  internal var isDelivered: Bool? {
+    get {
+      let key = "isDelivered"
+      willAccessValue(forKey: key)
+      defer { didAccessValue(forKey: key) }
+
+      return primitiveValue(forKey: key) as? Bool
+    }
+    set {
+      let key = "isDelivered"
+      willChangeValue(forKey: key)
+      defer { didChangeValue(forKey: key) }
+
+      setPrimitiveValue(newValue, forKey: key)
+    }
+  }
+  @NSManaged internal var lastSavedAt: Date?
   // swiftlint:enable discouraged_optional_boolean discouraged_optional_collection
 }
 
