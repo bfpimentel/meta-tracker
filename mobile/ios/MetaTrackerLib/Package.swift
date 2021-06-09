@@ -71,6 +71,7 @@ let package = Package(
         "AnalyticsClient",
         "DatabaseClient",
         "Models",
+        "SearchFeature",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
         .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
@@ -81,5 +82,15 @@ let package = Package(
 
     // Models
     .target(name: "Models"),
+
+    // SearchFeature
+    .target(
+        name: "SearchFeature",
+        dependencies: [
+            "APIClient",
+            "AnalyticsClient",
+        ]
+    ),
+    .testTarget(name: "SearchFeatureTests", dependencies: ["SearchFeature"]),
   ]
 )

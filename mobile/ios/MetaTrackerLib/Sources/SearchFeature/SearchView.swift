@@ -5,6 +5,28 @@ import ComposableArchitecture
 import Models
 import SwiftUI
 
+extension Result: Identifiable where Success == Tracking, Failure == TrackingError {
+  public var id: String {
+    switch self {
+    case .success(let tracking):
+      return "Tracking(\(tracking.id))"
+    case .failure(let error):
+      return "Error(\(error.code))"
+    }
+  }
+}
+
+extension Result where Success == Tracking, Failure == TrackingError {
+  var code: String {
+    switch self {
+    case .success(let tracking):
+      return tracking.code
+    case .failure(let error):
+      return error.code
+    }
+  }
+}
+
 public struct SearchState: Equatable {
   public var searchText: String
   public var result: [Result<Tracking, TrackingError>]
@@ -28,18 +50,17 @@ public enum SearchAction: Equatable {
   case searchResults(Result<[Result<Tracking, TrackingError>], NSError>)
 }
 
-struct SearchEnvironment {
-  var api: APIClient
-  var mainQueue: AnySchedulerOf<DispatchQueue>
+public struct SearchEnvironment {
+  public var api: APIClient
+  public var mainQueue: AnySchedulerOf<DispatchQueue>
+
+    public init(api: APIClient, mainQueue: AnySchedulerOf<DispatchQueue>) {
+        self.api = api
+        self.mainQueue = mainQueue
+    }
 }
 
-extension AppEnvironment {
-  var searchEnvironment: SearchEnvironment {
-    SearchEnvironment(api: api, mainQueue: mainQueue)
-  }
-}
-
-let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment> { state, action, env in
+public let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment> { state, action, env in
   struct CancellationId: Hashable {}
 
   switch action {
@@ -50,7 +71,11 @@ let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment> { stat
   case .searchCommited:
     state.isSearchInFlight = true
     return env.api
-      .trackings(state.searchText.components(separatedBy: ","))
+      .trackings(
+        state.searchText
+            .components(separatedBy: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+      )
       .cancellable(id: CancellationId(), cancelInFlight: true)
       .receive(on: env.mainQueue)
       .mapError { $0 as NSError }
@@ -75,11 +100,15 @@ let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment> { stat
   }
 }
 
-struct SearchView: View {
+public struct SearchView: View {
 
-  let store: Store<SearchState, SearchAction>
+    public let store: Store<SearchState, SearchAction>
 
-  var body: some View {
+    public init(store: Store<SearchState, SearchAction>) {
+        self.store = store
+    }
+
+    public var body: some View {
     WithViewStore(store) { viewStore in
       SearchNavigation(
         text: viewStore.binding(get: \.searchText, send: SearchAction.searchTextChanged)

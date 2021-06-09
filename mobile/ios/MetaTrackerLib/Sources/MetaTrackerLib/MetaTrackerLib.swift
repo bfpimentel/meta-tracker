@@ -5,6 +5,7 @@ import DatabaseClient
 import Models
 import OSLog
 import SwiftUI
+import SearchFeature
 
 public struct AppState: Equatable {
 
@@ -44,28 +45,6 @@ public let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, ac
     environment: \.searchEnvironment
   )
 )
-
-extension Result: Identifiable where Success == Tracking, Failure == TrackingError {
-  public var id: String {
-    switch self {
-    case .success(let tracking):
-      return "Tracking(\(tracking.id))"
-    case .failure(let error):
-      return "Error(\(error.code))"
-    }
-  }
-}
-
-extension Result where Success == Tracking, Failure == TrackingError {
-  var code: String {
-    switch self {
-    case .success(let tracking):
-      return tracking.code
-    case .failure(let error):
-      return error.code
-    }
-  }
-}
 
 public struct AppView: View {
   let store: Store<AppState, AppAction>

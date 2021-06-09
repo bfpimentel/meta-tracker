@@ -3,9 +3,11 @@ import ComposableArchitecture
 import Foundation
 import Models
 import XCTest
+import SearchFeature
 
-@testable import APIClient
 @testable import MetaTrackerLib
+@testable import APIClient
+
 
 final class SearchViewTests: XCTestCase {
   func test_searchTextChanged_changesSeachText() {

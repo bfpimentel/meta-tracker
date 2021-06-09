@@ -3,6 +3,7 @@ import AnalyticsClient
 import ComposableArchitecture
 import DatabaseClient
 import Foundation
+import SearchFeature
 
 public struct AppEnvironment {
   public var api: APIClient
@@ -23,6 +24,12 @@ public struct AppEnvironment {
     self.mainQueue = mainQueue
     self.analytics = analytics
     //    self.log = log
+  }
+}
+
+extension AppEnvironment {
+  var searchEnvironment: SearchEnvironment {
+    SearchEnvironment(api: api, mainQueue: mainQueue)
   }
 }
 
