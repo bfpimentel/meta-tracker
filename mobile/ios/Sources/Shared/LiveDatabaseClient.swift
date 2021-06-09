@@ -10,9 +10,9 @@ extension DatabaseClient {
       saveTrackings: { trackings in
         .catching { try live.saveTrackings(trackings) }
       },
-        fetchTrackingHistory: {
-            .catching { try live.fetchTrackingsHistory() }
-        }
+      fetchTrackingHistory: {
+        .catching { try live.fetchTrackingsHistory() }
+      }
     )
   }()
 }
@@ -49,18 +49,18 @@ struct LiveDatabaseClient {
 
     try moc.save()
   }
-    
-    func fetchTrackingsHistory() throws -> [TrackingHistory.Entry] {
-        let request = CDTracking.makeFetchRequest()
-        request.sortDescriptors = [
-            NSSortDescriptor(keyPath: \CDTracking.lastSavedAt, ascending: false)
-        ]
-        
-        let trackings = try moc.fetch(request)
-        return trackings.map {
-            TrackingHistory.Entry(code: $0.code!, lastTrackedAt: $0.lastSavedAt!)
-        }
+
+  func fetchTrackingsHistory() throws -> [TrackingHistory.Entry] {
+    let request = CDTracking.makeFetchRequest()
+    request.sortDescriptors = [
+      NSSortDescriptor(keyPath: \CDTracking.lastSavedAt, ascending: false)
+    ]
+
+    let trackings = try moc.fetch(request)
+    return trackings.map {
+      TrackingHistory.Entry(code: $0.code!, lastTrackedAt: $0.lastSavedAt!)
     }
+  }
 
   private func removeTrackings(withCodes codes: [String]) throws {
     let request = CDTracking.makeFetchRequest()

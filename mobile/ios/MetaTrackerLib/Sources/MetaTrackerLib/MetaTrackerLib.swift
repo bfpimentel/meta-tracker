@@ -3,16 +3,16 @@ import AnalyticsClient
 import AppEnvironment
 import ComposableArchitecture
 import DatabaseClient
+import HistoryFeature
 import Models
 import OSLog
-import HistoryFeature
 import SearchFeature
 import SwiftUI
 
 public struct AppState: Equatable {
 
   public var searchState: SearchState
-    public var trackingHistoryState: TrackingHistoryState
+  public var trackingHistoryState: TrackingHistoryState
 
   public init(
     searchState: SearchState = .init(),
@@ -26,7 +26,7 @@ public struct AppState: Equatable {
 public enum AppAction: Equatable {
   case appDelegate(AppDelegateAction)
   case searchAction(SearchAction)
-    case trackingHistoryAction(TrackingHistoryAction)
+  case trackingHistoryAction(TrackingHistoryAction)
 
 }
 
@@ -35,31 +35,31 @@ public enum AppDelegateAction: Equatable {
 }
 
 public let appReducer = Reducer<AppState, AppAction, AppEnvironment>.combine(
-    searchReducer.pullback(
+  searchReducer.pullback(
     state: \.searchState,
     action: /AppAction.searchAction,
     environment: \.searchEnvironment
   ),
-    trackingHistoryReducer.pullback(
-        state: \.trackingHistoryState,
-        action: /AppAction.trackingHistoryAction,
-        environment: \.trackingHistoryEnvironment
-    ),
-   Reducer { state, action, env in
-     switch action {
-     case .appDelegate(.didFinishLaunching):
-       return .concatenate(
-         .fireAndForget { env.analytics.initialize() },
-         .fireAndForget { env.analytics.track(.appLaunched) }
-       )
+  trackingHistoryReducer.pullback(
+    state: \.trackingHistoryState,
+    action: /AppAction.trackingHistoryAction,
+    environment: \.trackingHistoryEnvironment
+  ),
+  Reducer { state, action, env in
+    switch action {
+    case .appDelegate(.didFinishLaunching):
+      return .concatenate(
+        .fireAndForget { env.analytics.initialize() },
+        .fireAndForget { env.analytics.track(.appLaunched) }
+      )
 
-     case .searchAction:
-       return .none
-       
-     case .trackingHistoryAction:
-       return .none
-     }
-   }
+    case .searchAction:
+      return .none
+
+    case .trackingHistoryAction:
+      return .none
+    }
+  }
 )
 
 public struct AppView: View {
@@ -71,25 +71,25 @@ public struct AppView: View {
 
   public var body: some View {
     TabView {
-        SearchView(
-          store: store.scope(
-            state: \.searchState,
-            action: AppAction.searchAction
-          )
+      SearchView(
+        store: store.scope(
+          state: \.searchState,
+          action: AppAction.searchAction
         )
-        .tabItem {
-            Label("Buscar", systemImage: "magnifyingglass")
-        }
-        
-        TrackingHistoryView(
-            store: store.scope(
-                state: \.trackingHistoryState,
-                action: AppAction.trackingHistoryAction
-            )
+      )
+      .tabItem {
+        Label("Buscar", systemImage: "magnifyingglass")
+      }
+
+      TrackingHistoryView(
+        store: store.scope(
+          state: \.trackingHistoryState,
+          action: AppAction.trackingHistoryAction
         )
-        .tabItem {
-            Label("Histórico", systemImage: "folder")
-        }
+      )
+      .tabItem {
+        Label("Histórico", systemImage: "folder")
+      }
     }
   }
 }

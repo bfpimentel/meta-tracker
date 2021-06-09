@@ -5,7 +5,7 @@ import Models
 public struct DatabaseClient {
 
   public var saveTrackings: ([Tracking]) -> Effect<Void, Error>
-    public var fetchTrackingHistory: () -> Effect<[TrackingHistory.Entry], Error>
+  public var fetchTrackingHistory: () -> Effect<[TrackingHistory.Entry], Error>
 
   public init(
     saveTrackings: @escaping ([Tracking]) -> Effect<Void, Error>,
@@ -24,12 +24,12 @@ public struct DatabaseClient {
       saveTrackings: { _ in
         .failing("DatabaseClient.saveTrackings()")
       },
-        fetchTrackingHistory: { .failing("DatabaseClient.fetchTrackingHistory()") }
+      fetchTrackingHistory: { .failing("DatabaseClient.fetchTrackingHistory()") }
     )
 
     public static let noop = DatabaseClient(
       saveTrackings: { _ in .none },
-        fetchTrackingHistory: { .none }
+      fetchTrackingHistory: { .none }
     )
   }
 #endif
