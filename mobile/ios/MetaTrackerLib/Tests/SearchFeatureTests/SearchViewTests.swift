@@ -84,6 +84,14 @@ final class SearchViewTests: XCTestCase {
 
     env.api.trackings = { _ in .init(value: [tracking]) }
     env.mainQueue = scheduler.eraseToAnyScheduler()
+    env.db.saveTrackings = { trackings in
+        do {
+            XCTAssertEqual(trackings, [try tracking.get()])
+            return .init(value: ())
+        } catch {
+            return .init(error: error)
+        }
+    }
 
     let store = TestStore(
       initialState: .init(searchText: "LE251026577SE"),

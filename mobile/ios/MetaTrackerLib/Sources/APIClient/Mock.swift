@@ -6,8 +6,7 @@
   extension APIClient {
     public static let failing = APIClient(
       trackings: {
-        XCTFail("APIClient.trackings(\($0)) is unimplemented.")
-        return .none
+        .failing("APIClient.trackings(\($0))")
       }
     )
   }

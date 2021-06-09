@@ -19,9 +19,12 @@ public struct DatabaseClient {
   extension DatabaseClient {
     public static let failing = DatabaseClient(
       saveTrackings: { _ in
-        XCTFail("DatabaseClient.saveTrackings() not implemented.")
-        return .none
+        .failing("DatabaseClient.saveTrackings()")
       }
+    )
+    
+    public static let noop = DatabaseClient(
+        saveTrackings: { _ in .none }
     )
   }
 #endif

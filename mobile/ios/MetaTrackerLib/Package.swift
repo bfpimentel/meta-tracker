@@ -101,6 +101,7 @@ let package = Package(
       name: "SearchFeature",
       dependencies: [
         "APIClient",
+        "DatabaseClient",
         "AnalyticsClient",
       ]
     ),
