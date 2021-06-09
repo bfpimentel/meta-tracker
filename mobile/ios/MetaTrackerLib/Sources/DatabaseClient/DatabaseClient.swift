@@ -22,9 +22,9 @@ public struct DatabaseClient {
         .failing("DatabaseClient.saveTrackings()")
       }
     )
-    
+
     public static let noop = DatabaseClient(
-        saveTrackings: { _ in .none }
+      saveTrackings: { _ in .none }
     )
   }
 #endif

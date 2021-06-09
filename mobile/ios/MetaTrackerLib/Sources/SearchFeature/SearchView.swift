@@ -1,8 +1,8 @@
 //  Created by Guilherme Souza on 30/05/21.
 
 import APIClient
-import DatabaseClient
 import ComposableArchitecture
+import DatabaseClient
 import Models
 import SwiftUI
 
@@ -53,7 +53,7 @@ public enum SearchAction: Equatable {
 
 public struct SearchEnvironment {
   public var api: APIClient
-    public var db: DatabaseClient
+  public var db: DatabaseClient
   public var mainQueue: AnySchedulerOf<DispatchQueue>
 
   public init(api: APIClient, db: DatabaseClient, mainQueue: AnySchedulerOf<DispatchQueue>) {
@@ -80,12 +80,12 @@ public let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment>
           .components(separatedBy: ",")
           .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
       )
-        .flatMap { results in
-            env.db
-                .saveTrackings(results.compactMap { try? $0.get() })
-                .map { _ in results }
-        }
-        .eraseToEffect()
+      .flatMap { results in
+        env.db
+          .saveTrackings(results.compactMap { try? $0.get() })
+          .map { _ in results }
+      }
+      .eraseToEffect()
       .cancellable(id: CancellationId(), cancelInFlight: true)
       .receive(on: env.mainQueue)
       .mapError { $0 as NSError }
