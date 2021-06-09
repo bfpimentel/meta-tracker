@@ -64,6 +64,7 @@ let package = Package(
         "AnalyticsClient",
         "DatabaseClient",
         "SearchFeature",
+        "HistoryFeature",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
         .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
