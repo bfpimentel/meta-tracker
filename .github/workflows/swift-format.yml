@@ -2,8 +2,8 @@ name: Swift Format
 
 on:
   push:
-    paths:
-      - "mobile/ios/**/*.swift"
+    # paths:
+    #   - "mobile/ios/**/*.swift"
     branches:
       - main
 
@@ -13,8 +13,10 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Tap
+        run: brew tap pointfreeco/formulae
       - name: Install
-        run: brew install swift-format
+        run: brew install Formulae/swift-format@5.3
       - name: Format
         run: make format
         working-directory: "mobile/ios"
