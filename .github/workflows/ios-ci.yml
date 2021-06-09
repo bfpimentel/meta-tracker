@@ -17,6 +17,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Copy Secrets.swift
+        run: cp MetaTrackerLib/Sources/Secrets/_Secrets.swift MetaTrackerLib/Sources/Secrets/Secrets.swift
+        working-directory: "mobile/ios"
       - name: Run tests
         run: fastlane test
         working-directory: "mobile/ios"
